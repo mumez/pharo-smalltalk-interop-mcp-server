@@ -45,6 +45,24 @@ class TestPharoClient:
         client = PharoClient(host="example.com", port=9999)
         assert client.base_url == "http://example.com:9999"
 
+    @patch.dict("os.environ", {"PHARO_SIS_PORT": "8081"})
+    def test_init_with_environment_variable(self):
+        """Test PharoClient initialization with environment variable."""
+        client = PharoClient()
+        assert client.base_url == "http://localhost:8081"
+
+    @patch.dict("os.environ", {"PHARO_SIS_PORT": "8081"})
+    def test_init_explicit_port_overrides_env(self):
+        """Test that explicit port parameter overrides environment variable."""
+        client = PharoClient(port=9999)
+        assert client.base_url == "http://localhost:9999"
+
+    @patch.dict("os.environ", {}, clear=True)
+    def test_init_default_port_when_no_env(self):
+        """Test default port is used when no environment variable is set."""
+        client = PharoClient()
+        assert client.base_url == "http://localhost:8086"
+
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
     def test_make_request_get_success(self, mock_client_class):
         """Test successful GET request."""

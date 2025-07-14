@@ -1,6 +1,7 @@
 """Core functions for Pharo MCP server without FastMCP decorators."""
 
 import json
+import os
 from typing import Any
 
 import httpx
@@ -15,7 +16,9 @@ class PharoInteropError(Exception):
 class PharoClient:
     """HTTP client for communicating with PharoSmalltalkInteropServer."""
 
-    def __init__(self, host: str = "localhost", port: int = 8086):
+    def __init__(self, host: str = "localhost", port: int | None = None):
+        if port is None:
+            port = int(os.getenv("PHARO_SIS_PORT", "8086"))
         self.base_url = f"http://{host}:{port}"
         self.client = httpx.Client(timeout=30.0)
 

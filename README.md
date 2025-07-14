@@ -39,6 +39,22 @@ Start the server:
 uv run pharo-smalltalk-interop-mcp-server
 ```
 
+#### Environment Variables
+
+You can configure the server using environment variables:
+
+- **`PHARO_SIS_PORT`**: Port number for PharoSmalltalkInteropServer (default: 8086)
+
+Examples:
+
+```bash
+# Connect to PharoSmalltalkInteropServer on port 8081
+PHARO_SIS_PORT=8081 uv run pharo-smalltalk-interop-mcp-server
+
+# Connect to PharoSmalltalkInteropServer on port 9999
+PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
+```
+
 ### Cursor MCP settings
 
 ```json:mcp.json
@@ -51,11 +67,16 @@ uv run pharo-smalltalk-interop-mcp-server
         "/your-path/to/pharo-smalltalk-interop-mcp-server",
         "run",
         "pharo-smalltalk-interop-mcp-server"
-      ]
+      ],
+      "env": {
+        "PHARO_SIS_PORT": "8081"
+      }
     }
   }
 }
 ```
+
+Note: The `env` section is optional and can be used to set environment variables for the MCP server.
 
 ### MCP Tools Available
 
