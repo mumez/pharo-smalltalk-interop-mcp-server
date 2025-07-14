@@ -1,5 +1,7 @@
 # pharo-smalltalk-interop-mcp-server
 
+[![CI](https://github.com/mumez/pharo-smalltalk-interop-mcp-srever/actions/workflows/ci.yml/badge.svg)](https://github.com/mumez/pharo-smalltalk-interop-mcp-srever/actions/workflows/ci.yml)
+
 A local MCP server to communicate local Pharo Smalltalk image.
 It supports:
 
