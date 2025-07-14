@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: uv sync
+
+    - name: Lint with ruff
+      run: uv run ruff check
+
+    - name: Check code formatting with ruff
+      run: uv run ruff format --check
+
+    - name: Check markdown formatting
+      run: uv run mdformat --check README.md CLAUDE.md
+
+    - name: Run tests
+      run: uv run pytest -v
+
+    - name: Test MCP server can start
+      run: |
+        timeout 10s uv run pharo-smalltalk-interop-mcp-server || test $? = 124
+      env:
+        PHARO_SIS_PORT: 8087

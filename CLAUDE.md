@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Python-based MCP (Model Context Protocol) server designed to communicate with local Pharo Smalltalk images. The server provides an interface for:
 
 - **Code Evaluation**: Execute Smalltalk expressions and return results
-- **Code Introspection**: Retrieve source code, comments, and metadata for classes and methods  
+- **Code Introspection**: Retrieve source code, comments, and metadata for classes and methods
 - **Search & Discovery**: Find classes, traits, methods, references, and implementors
 - **Package Management**: Export and import packages in Tonel format
 - **Test Execution**: Run test suites at package or class level
@@ -15,6 +15,7 @@ This is a Python-based MCP (Model Context Protocol) server designed to communica
 ## Development Setup
 
 This project uses `uv` as the Python package manager. Prerequisites:
+
 - Python 3.10 or later
 - [uv](https://docs.astral.sh/uv/) package manager
 - Pharo with [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer) installed
@@ -49,12 +50,14 @@ The codebase follows a layered architecture with clean separation of concerns:
 ### Core Components
 
 1. **`core.py`** - HTTP client layer
+
    - `PharoClient` class handles all HTTP communication with PharoSmalltalkInteropServer
    - Connects to `localhost:8086` by default
    - Comprehensive error handling for connection, HTTP, and JSON parsing errors
    - 16 core operations mapped to Pharo API endpoints
 
-2. **`server.py`** - MCP server layer  
+1. **`server.py`** - MCP server layer
+
    - Built on FastMCP framework
    - Decorates core functions with MCP tool registration
    - Exposes 16 MCP tools covering code evaluation, introspection, search, packages, and testing

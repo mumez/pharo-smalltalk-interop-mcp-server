@@ -2,6 +2,7 @@
 
 A local MCP server to communicate local Pharo Smalltalk image.
 It supports:
+
 - Code Evaluation: Execute Smalltalk expressions and return results
 - Code Introspection: Retrieve source code, comments, and metadata for classes and methods
 - Search & Discovery: Find classes, traits, methods, references, and implementors
@@ -83,14 +84,17 @@ Note: The `env` section is optional and can be used to set environment variables
 This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
 
 #### Code Evaluation
+
 - **`eval`**: Execute Smalltalk expressions and return results
 
 #### Code Introspection
+
 - **`get_class_source`**: Retrieve source code of a class
 - **`get_method_source`**: Retrieve source code of a specific method
 - **`get_class_comment`**: Retrieve comment/documentation of a class
 
 #### Search & Discovery
+
 - **`search_classes_like`**: Find classes matching a pattern
 - **`search_methods_like`**: Find methods matching a pattern
 - **`search_traits_like`**: Find traits matching a pattern
@@ -99,6 +103,7 @@ This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](
 - **`search_references_to_class`**: Find all references to a class
 
 #### Package Management
+
 - **`list_packages`**: List all packages in the image
 - **`list_classes`**: List classes in a specific package
 - **`list_extended_classes`**: List extended classes in a package
@@ -107,6 +112,7 @@ This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](
 - **`import_package`**: Import a package from Tonel format
 
 #### Test Execution
+
 - **`run_package_test`**: Run test suites for a package
 - **`run_class_test`**: Run test suites for a specific class
 
@@ -160,12 +166,14 @@ pharo-smalltalk-interop-mcp-server/
 ### Testing Strategy
 
 The test suite uses mock-based testing to ensure:
+
 - **No external dependencies**: Tests run without requiring a live Pharo instance
 - **Comprehensive coverage**: All 20 endpoints and error scenarios are tested
 - **Fast execution**: Tests complete in under 1 second
 - **Reliable results**: Tests are deterministic and don't depend on external state
 
 Test coverage includes:
+
 - HTTP client functionality (`PharoClient` class)
 - All 20 Pharo interop operations
 - Error handling (connection errors, HTTP errors, JSON parsing errors)

@@ -4,11 +4,9 @@ import json
 from unittest.mock import Mock, patch
 
 import httpx
-import pytest
 
 from pharo_smalltalk_interop_mcp_server.core import (
     PharoClient,
-    PharoInteropError,
     get_pharo_client,
     interop_eval,
     interop_export_package,
@@ -109,7 +107,10 @@ class TestPharoClient:
         client = PharoClient()
         result = client._make_request("GET", "/test")
 
-        assert result == {"success": False, "error": "Connection error: Connection failed"}
+        assert result == {
+            "success": False,
+            "error": "Connection error: Connection failed",
+        }
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
     def test_make_request_http_error(self, mock_client_class):
@@ -200,7 +201,10 @@ class TestPharoClient:
         """Test search_classes_like method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["String", "Symbol"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["String", "Symbol"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -234,7 +238,10 @@ class TestPharoClient:
         """Test search_implementors method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Object", "ProtoObject"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Object", "ProtoObject"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -251,7 +258,10 @@ class TestPharoClient:
         """Test search_references method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Class1", "Class2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Class1", "Class2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -311,7 +321,8 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": "test results"}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/run-package-test", params={"package_name": "MyPackage"}
+            "http://localhost:8086/run-package-test",
+            params={"package_name": "MyPackage"},
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -336,7 +347,10 @@ class TestPharoClient:
         """Test list_packages method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Package1", "Package2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Package1", "Package2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -344,14 +358,19 @@ class TestPharoClient:
         result = client.list_packages()
 
         assert result == {"success": True, "result": ["Package1", "Package2"]}
-        mock_client.get.assert_called_once_with("http://localhost:8086/list-packages", params=None)
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/list-packages", params=None
+        )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
     def test_list_classes(self, mock_client_class):
         """Test list_classes method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Class1", "Class2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Class1", "Class2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -385,7 +404,10 @@ class TestPharoClient:
         """Test list_extended_classes method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["ExtClass1", "ExtClass2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["ExtClass1", "ExtClass2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -394,7 +416,8 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["ExtClass1", "ExtClass2"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/list-extended-classes", params={"package_name": "MyPackage"}
+            "http://localhost:8086/list-extended-classes",
+            params={"package_name": "MyPackage"},
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -402,7 +425,10 @@ class TestPharoClient:
         """Test list_methods method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["method1", "method2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["method1", "method2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -419,7 +445,10 @@ class TestPharoClient:
         """Test search_traits_like method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Trait1", "Trait2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Trait1", "Trait2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -436,7 +465,10 @@ class TestPharoClient:
         """Test search_references_to_class method."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.json.return_value = {"success": True, "result": ["Class1", "Class2"]}
+        mock_response.json.return_value = {
+            "success": True,
+            "result": ["Class1", "Class2"],
+        }
         mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
@@ -445,7 +477,8 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["Class1", "Class2"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-references-to-class", params={"class_name": "Object"}
+            "http://localhost:8086/search-references-to-class",
+            params={"class_name": "Object"},
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -502,7 +535,10 @@ class TestInteropFunctions:
     def test_interop_get_class_source(self, mock_get_client):
         """Test interop_get_class_source function."""
         mock_client = Mock()
-        mock_client.get_class_source.return_value = {"success": True, "result": "source"}
+        mock_client.get_class_source.return_value = {
+            "success": True,
+            "result": "source",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_get_class_source("Object")
@@ -514,7 +550,10 @@ class TestInteropFunctions:
     def test_interop_get_method_source(self, mock_get_client):
         """Test interop_get_method_source function."""
         mock_client = Mock()
-        mock_client.get_method_source.return_value = {"success": True, "result": "source"}
+        mock_client.get_method_source.return_value = {
+            "success": True,
+            "result": "source",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_get_method_source("Object", "hash")
@@ -526,7 +565,10 @@ class TestInteropFunctions:
     def test_interop_search_classes_like(self, mock_get_client):
         """Test interop_search_classes_like function."""
         mock_client = Mock()
-        mock_client.search_classes_like.return_value = {"success": True, "result": ["String"]}
+        mock_client.search_classes_like.return_value = {
+            "success": True,
+            "result": ["String"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_classes_like("Str*")
@@ -538,7 +580,10 @@ class TestInteropFunctions:
     def test_interop_search_methods_like(self, mock_get_client):
         """Test interop_search_methods_like function."""
         mock_client = Mock()
-        mock_client.search_methods_like.return_value = {"success": True, "result": ["add:"]}
+        mock_client.search_methods_like.return_value = {
+            "success": True,
+            "result": ["add:"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_methods_like("a*:")
@@ -550,7 +595,10 @@ class TestInteropFunctions:
     def test_interop_search_implementors(self, mock_get_client):
         """Test interop_search_implementors function."""
         mock_client = Mock()
-        mock_client.search_implementors.return_value = {"success": True, "result": ["Object"]}
+        mock_client.search_implementors.return_value = {
+            "success": True,
+            "result": ["Object"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_implementors("hash")
@@ -562,7 +610,10 @@ class TestInteropFunctions:
     def test_interop_search_references(self, mock_get_client):
         """Test interop_search_references function."""
         mock_client = Mock()
-        mock_client.search_references.return_value = {"success": True, "result": ["Class1"]}
+        mock_client.search_references.return_value = {
+            "success": True,
+            "result": ["Class1"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_references("hash")
@@ -586,7 +637,10 @@ class TestInteropFunctions:
     def test_interop_import_package(self, mock_get_client):
         """Test interop_import_package function."""
         mock_client = Mock()
-        mock_client.import_package.return_value = {"success": True, "result": "imported"}
+        mock_client.import_package.return_value = {
+            "success": True,
+            "result": "imported",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_import_package("tonel content")
@@ -598,7 +652,10 @@ class TestInteropFunctions:
     def test_interop_run_package_test(self, mock_get_client):
         """Test interop_run_package_test function."""
         mock_client = Mock()
-        mock_client.run_package_test.return_value = {"success": True, "result": "test results"}
+        mock_client.run_package_test.return_value = {
+            "success": True,
+            "result": "test results",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_run_package_test("MyPackage")
@@ -610,7 +667,10 @@ class TestInteropFunctions:
     def test_interop_run_class_test(self, mock_get_client):
         """Test interop_run_class_test function."""
         mock_client = Mock()
-        mock_client.run_class_test.return_value = {"success": True, "result": "test results"}
+        mock_client.run_class_test.return_value = {
+            "success": True,
+            "result": "test results",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_run_class_test("MyClass")
@@ -622,7 +682,10 @@ class TestInteropFunctions:
     def test_interop_list_packages(self, mock_get_client):
         """Test interop_list_packages function."""
         mock_client = Mock()
-        mock_client.list_packages.return_value = {"success": True, "result": ["Package1"]}
+        mock_client.list_packages.return_value = {
+            "success": True,
+            "result": ["Package1"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_list_packages()
@@ -646,7 +709,10 @@ class TestInteropFunctions:
     def test_interop_get_class_comment(self, mock_get_client):
         """Test interop_get_class_comment function."""
         mock_client = Mock()
-        mock_client.get_class_comment.return_value = {"success": True, "result": "comment"}
+        mock_client.get_class_comment.return_value = {
+            "success": True,
+            "result": "comment",
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_get_class_comment("Object")
@@ -658,7 +724,10 @@ class TestInteropFunctions:
     def test_interop_list_extended_classes(self, mock_get_client):
         """Test interop_list_extended_classes function."""
         mock_client = Mock()
-        mock_client.list_extended_classes.return_value = {"success": True, "result": ["ExtClass1"]}
+        mock_client.list_extended_classes.return_value = {
+            "success": True,
+            "result": ["ExtClass1"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_list_extended_classes("MyPackage")
@@ -682,7 +751,10 @@ class TestInteropFunctions:
     def test_interop_search_traits_like(self, mock_get_client):
         """Test interop_search_traits_like function."""
         mock_client = Mock()
-        mock_client.search_traits_like.return_value = {"success": True, "result": ["Trait1"]}
+        mock_client.search_traits_like.return_value = {
+            "success": True,
+            "result": ["Trait1"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_traits_like("T*")
@@ -694,7 +766,10 @@ class TestInteropFunctions:
     def test_interop_search_references_to_class(self, mock_get_client):
         """Test interop_search_references_to_class function."""
         mock_client = Mock()
-        mock_client.search_references_to_class.return_value = {"success": True, "result": ["Class1"]}
+        mock_client.search_references_to_class.return_value = {
+            "success": True,
+            "result": ["Class1"],
+        }
         mock_get_client.return_value = mock_client
 
         result = interop_search_references_to_class("Object")
