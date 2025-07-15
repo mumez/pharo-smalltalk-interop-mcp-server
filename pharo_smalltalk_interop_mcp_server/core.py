@@ -62,27 +62,27 @@ class PharoClient:
 
     def search_classes_like(self, pattern: str) -> dict[str, Any]:
         """Find classes matching pattern."""
-        data = {"pattern": pattern}
+        data = {"class_name_query": pattern}
         return self._make_request("GET", "/search-classes-like", data)
 
     def search_methods_like(self, pattern: str) -> dict[str, Any]:
         """Find methods matching pattern."""
-        data = {"pattern": pattern}
+        data = {"method_name_query": pattern}
         return self._make_request("GET", "/search-methods-like", data)
 
     def search_implementors(self, selector: str) -> dict[str, Any]:
         """Get implementors of a selector."""
-        data = {"selector": selector}
+        data = {"method_name": selector}
         return self._make_request("GET", "/search-implementors", data)
 
     def search_references(self, selector: str) -> dict[str, Any]:
         """Get references to a selector."""
-        data = {"selector": selector}
+        data = {"program_symbol": selector}
         return self._make_request("GET", "/search-references", data)
 
-    def export_package(self, package_name: str) -> dict[str, Any]:
+    def export_package(self, package_name: str, path: str = "/tmp") -> dict[str, Any]:
         """Export package in Tonel format."""
-        data = {"package_name": package_name}
+        data = {"package_name": package_name, "path": path}
         return self._make_request("GET", "/export-package", data)
 
     def import_package(self, tonel_content: str) -> dict[str, Any]:
@@ -126,7 +126,7 @@ class PharoClient:
 
     def search_traits_like(self, pattern: str) -> dict[str, Any]:
         """Find traits matching pattern."""
-        data = {"pattern": pattern}
+        data = {"trait_name_query": pattern}
         return self._make_request("GET", "/search-traits-like", data)
 
     def search_references_to_class(self, class_name: str) -> dict[str, Any]:
@@ -201,10 +201,10 @@ def interop_search_references(selector: str) -> dict[str, Any]:
     return client.search_references(selector)
 
 
-def interop_export_package(package_name: str) -> dict[str, Any]:
+def interop_export_package(package_name: str, path: str = "/tmp") -> dict[str, Any]:
     """Export package in Tonel format."""
     client = get_pharo_client()
-    return client.export_package(package_name)
+    return client.export_package(package_name, path)
 
 
 def interop_import_package(tonel_content: str) -> dict[str, Any]:

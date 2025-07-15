@@ -167,17 +167,18 @@ def list_classes(_: Context, package_name: str) -> dict[str, Any]:
 
 
 @mcp.tool("export_package")
-def export_package(_: Context, package_name: str) -> dict[str, Any]:
+def export_package(_: Context, package_name: str, path: str = "/tmp") -> dict[str, Any]:
     """
     Export a package in Tonel format.
 
     Args:
         package_name: The name of the package to export
+        path: The path where to export the package (default: /tmp)
 
     Returns:
         API response with success/error and result
     """
-    return interop_export_package(package_name)
+    return interop_export_package(package_name, path)
 
 
 @mcp.tool("import_package")
