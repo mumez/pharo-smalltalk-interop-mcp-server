@@ -88,7 +88,7 @@ The server is designed to be configured in Cursor's mcp.json:
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/pharo-smalltalk-interop-mcp-server", 
+        "/path/to/pharo-smalltalk-interop-mcp-server",
         "run",
         "pharo-smalltalk-interop-mcp-server"
       ]

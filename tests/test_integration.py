@@ -5,7 +5,6 @@ running on port 8086. They are designed to be version-agnostic and test
 the actual functionality of the MCP server.
 """
 
-
 import pytest
 
 from pharo_smalltalk_interop_mcp_server.core import PharoClient
@@ -67,7 +66,6 @@ class TestPharoIntegration:
         response = self.client.evaluate(code)
         assert response["success"] is True
         assert "1000" in str(response["result"])
-
 
     def test_list_packages(self):
         """Test listing packages."""
@@ -232,14 +230,15 @@ class TestPharoIntegration:
     def test_export_package(self):
         """Test export and import of Sis-Tests-Dummy package."""
         # Test export
-        export_response = self.client.export_package("Sis-Tests-Dummy", "/tmp") #TODO: not to use /tmp. create a specific temporary directory
+        export_response = self.client.export_package(
+            "Sis-Tests-Dummy", "/tmp"
+        )  # TODO: not to use /tmp. create a specific temporary directory
         assert export_response["success"] is True
         assert "result" in export_response
         result = export_response["result"]
         assert result.startswith("Sis-Tests-Dummy exported to: ")
         # TODO: check the *.st file really exists
         # TODO: delete the exporting temporary directory
-        
 
     def test_list_extended_classes(self):
         """Test listing extended classes in System-Object Events package."""
@@ -250,7 +249,6 @@ class TestPharoIntegration:
         extended_classes = response["result"]
         # Should include Object as extended class
         assert "Object" in extended_classes
-
 
     def test_comprehensive_package_analysis(self):
         """Test comprehensive analysis of SIS packages."""
