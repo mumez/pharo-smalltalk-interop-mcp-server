@@ -213,7 +213,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["String", "Symbol"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-classes-like", params={"pattern": "Str*"}
+            "http://localhost:8086/search-classes-like", params={"class_name_query": "Str*"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -230,7 +230,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["add:", "at:"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-methods-like", params={"pattern": "a*:"}
+            "http://localhost:8086/search-methods-like", params={"method_name_query": "a*:"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -250,7 +250,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["Object", "ProtoObject"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-implementors", params={"selector": "hash"}
+            "http://localhost:8086/search-implementors", params={"method_name": "hash"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -270,7 +270,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["Class1", "Class2"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-references", params={"selector": "hash"}
+            "http://localhost:8086/search-references", params={"program_symbol": "hash"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -287,7 +287,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": "tonel content"}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/export-package", params={"package_name": "MyPackage"}
+            "http://localhost:8086/export-package", params={"package_name": "MyPackage", "path": "/tmp"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -457,7 +457,7 @@ class TestPharoClient:
 
         assert result == {"success": True, "result": ["Trait1", "Trait2"]}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/search-traits-like", params={"pattern": "T*"}
+            "http://localhost:8086/search-traits-like", params={"trait_name_query": "T*"}
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -631,7 +631,7 @@ class TestInteropFunctions:
         result = interop_export_package("MyPackage")
 
         assert result == {"success": True, "result": "tonel"}
-        mock_client.export_package.assert_called_once_with("MyPackage")
+        mock_client.export_package.assert_called_once_with("MyPackage", "/tmp")
 
     @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
     def test_interop_import_package(self, mock_get_client):
