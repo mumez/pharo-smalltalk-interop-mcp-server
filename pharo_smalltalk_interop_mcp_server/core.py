@@ -60,14 +60,14 @@ class PharoClient:
         data = {"class_name": class_name, "method_name": method_name}
         return self._make_request("GET", "/get-method-source", data)
 
-    def search_classes_like(self, pattern: str) -> dict[str, Any]:
+    def search_classes_like(self, class_name_query: str) -> dict[str, Any]:
         """Find classes matching pattern."""
-        data = {"class_name_query": pattern}
+        data = {"class_name_query": class_name_query}
         return self._make_request("GET", "/search-classes-like", data)
 
-    def search_methods_like(self, pattern: str) -> dict[str, Any]:
+    def search_methods_like(self, method_name_query: str) -> dict[str, Any]:
         """Find methods matching pattern."""
-        data = {"method_name_query": pattern}
+        data = {"method_name_query": method_name_query}
         return self._make_request("GET", "/search-methods-like", data)
 
     def search_implementors(self, selector: str) -> dict[str, Any]:
@@ -177,16 +177,16 @@ def interop_get_method_source(class_name: str, method_name: str) -> dict[str, An
     return client.get_method_source(class_name, method_name)
 
 
-def interop_search_classes_like(pattern: str) -> dict[str, Any]:
+def interop_search_classes_like(class_name_query: str) -> dict[str, Any]:
     """Find classes matching pattern."""
     client = get_pharo_client()
-    return client.search_classes_like(pattern)
+    return client.search_classes_like(class_name_query)
 
 
-def interop_search_methods_like(pattern: str) -> dict[str, Any]:
+def interop_search_methods_like(method_name_query: str) -> dict[str, Any]:
     """Find methods matching pattern."""
     client = get_pharo_client()
-    return client.search_methods_like(pattern)
+    return client.search_methods_like(method_name_query)
 
 
 def interop_search_implementors(selector: str) -> dict[str, Any]:

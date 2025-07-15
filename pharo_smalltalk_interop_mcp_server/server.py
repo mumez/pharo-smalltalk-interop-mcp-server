@@ -86,59 +86,59 @@ def get_class_comment(_: Context, class_name: str) -> dict[str, Any]:
 
 
 @mcp.tool("search_classes_like")
-def search_classes_like(_: Context, pattern: str) -> dict[str, Any]:
+def search_classes_like(_: Context, class_name_query: str) -> dict[str, Any]:
     """
     Find classes matching a pattern.
 
     Args:
-        pattern: The pattern to search for in class names
+        class_name_query: The pattern to search for in class names
 
     Returns:
         API response with success/error and result
     """
-    return interop_search_classes_like(pattern)
+    return interop_search_classes_like(class_name_query)
 
 
 @mcp.tool("search_methods_like")
-def search_methods_like(_: Context, pattern: str) -> dict[str, Any]:
+def search_methods_like(_: Context, method_name_query: str) -> dict[str, Any]:
     """
     Find methods matching a pattern.
 
     Args:
-        pattern: The pattern to search for in method names
+        method_name_query: The pattern to search for in method names
 
     Returns:
         API response with success/error and result
     """
-    return interop_search_methods_like(pattern)
+    return interop_search_methods_like(method_name_query)
 
 
 @mcp.tool("search_implementors")
-def search_implementors(_: Context, selector: str) -> dict[str, Any]:
+def search_implementors(_: Context, method_name: str) -> dict[str, Any]:
     """
     Get all implementors of a method selector.
 
     Args:
-        selector: The method selector to find implementors for
+        method_name: The method name to find implementors for
 
     Returns:
         API response with success/error and result
     """
-    return interop_search_implementors(selector)
+    return interop_search_implementors(method_name)
 
 
 @mcp.tool("search_references")
-def search_references(_: Context, selector: str) -> dict[str, Any]:
+def search_references(_: Context, method_name: str) -> dict[str, Any]:
     """
     Get all references to a method selector.
 
     Args:
-        selector: The method selector to find references for
+        method_name: The method name to find references for
 
     Returns:
         API response with success/error and result
     """
-    return interop_search_references(selector)
+    return interop_search_references(method_name)
 
 
 @mcp.tool("list_packages")
@@ -252,17 +252,17 @@ def list_methods(_: Context, package_name: str) -> dict[str, Any]:
 
 
 @mcp.tool("search_traits_like")
-def search_traits_like(_: Context, pattern: str) -> dict[str, Any]:
+def search_traits_like(_: Context, trait_name_query: str) -> dict[str, Any]:
     """
     Find traits matching a pattern.
 
     Args:
-        pattern: The pattern to search for in trait names
+        trait_name_query: The pattern to search for in trait names
 
     Returns:
         API response with success/error and result
     """
-    return interop_search_traits_like(pattern)
+    return interop_search_traits_like(trait_name_query)
 
 
 @mcp.tool("search_references_to_class")
