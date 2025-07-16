@@ -83,7 +83,7 @@ Note: The `env` section is optional and can be used to set environment variables
 
 ### MCP Tools Available
 
-This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
+This server provides 18 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
 
 #### Code Evaluation
 
@@ -170,14 +170,14 @@ pharo-smalltalk-interop-mcp-server/
 The test suite uses mock-based testing to ensure:
 
 - **No external dependencies**: Tests run without requiring a live Pharo instance
-- **Comprehensive coverage**: All 20 endpoints and error scenarios are tested
+- **Comprehensive coverage**: All 18 endpoints and error scenarios are tested
 - **Fast execution**: Tests complete in under 1 second
 - **Reliable results**: Tests are deterministic and don't depend on external state
 
 Test coverage includes:
 
 - HTTP client functionality (`PharoClient` class)
-- All 20 Pharo interop operations
+- All 18 Pharo interop operations
 - Error handling (connection errors, HTTP errors, JSON parsing errors)
 - MCP server initialization and tool registration
 - Integration between core functions and MCP tools

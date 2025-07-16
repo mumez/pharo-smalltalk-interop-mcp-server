@@ -72,7 +72,7 @@ The codebase follows a layered architecture with clean separation of concerns:
 
    - Built on FastMCP framework
    - Decorates core functions with MCP tool registration
-   - Exposes 17 MCP tools covering code evaluation, introspection, search, packages, and testing
+   - Exposes 18 MCP tools covering code evaluation, introspection, search, packages, and testing
 
 ### Tool Categories
 
@@ -120,4 +120,4 @@ Note: The `env` section is optional and can be used to set environment variables
 - Communication with Pharo uses HTTP to PharoSmalltalkInteropServer (port 8086)
 - All operations return structured JSON with success/error status
 - Comprehensive test suite with mock-based testing to avoid requiring a live Pharo instance
-- Tests cover all 17 endpoints and error scenarios
+- Tests cover all 18 endpoints and error scenarios
