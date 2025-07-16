@@ -6,6 +6,8 @@ the actual functionality of the MCP server.
 """
 
 import pytest
+import tempfile
+import glob
 
 from pharo_smalltalk_interop_mcp_server.core import PharoClient
 
@@ -229,16 +231,19 @@ class TestPharoIntegration:
 
     def test_export_package(self):
         """Test export and import of Sis-Tests-Dummy package."""
-        # Test export
-        export_response = self.client.export_package(
-            "Sis-Tests-Dummy", "/tmp"
-        )  # TODO: not to use /tmp. create a specific temporary directory
-        assert export_response["success"] is True
-        assert "result" in export_response
-        result = export_response["result"]
-        assert result.startswith("Sis-Tests-Dummy exported to: ")
-        # TODO: check the *.st file really exists
-        # TODO: delete the exporting temporary directory
+        # Use a temporary directory for export
+        with tempfile.TemporaryDirectory() as tmpdir:
+            export_response = self.client.export_package(
+                "Sis-Tests-Dummy", tmpdir
+            )
+            assert export_response["success"] is True
+            assert "result" in export_response
+            result = export_response["result"]
+            assert result.startswith("Sis-Tests-Dummy exported to: ")
+            # Check the *.st file really exists (search recursively)
+            st_files = glob.glob(f"{tmpdir}/**/*.st", recursive=True)
+            assert len(st_files) > 0, f"No .st file found in {tmpdir} or its subdirectories after export"
+        # Temporary directory is deleted automatically after the with block
 
     def test_list_extended_classes(self):
         """Test listing extended classes in System-Object Events package."""
