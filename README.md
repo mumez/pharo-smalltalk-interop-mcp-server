@@ -111,7 +111,7 @@ This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](
 - **`list_extended_classes`**: List extended classes in a package
 - **`list_methods`**: List methods in a package
 - **`export_package`**: Export a package in Tonel format
-- **`import_package`**: Import a package from Tonel format
+- **`import_package`**: Import a package from specified path
 
 #### Test Execution
 

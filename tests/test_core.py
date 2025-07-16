@@ -303,11 +303,12 @@ class TestPharoClient:
         mock_client_class.return_value = mock_client
 
         client = PharoClient()
-        result = client.import_package("tonel content")
+        result = client.import_package("TestPackage", "/tmp/test")
 
         assert result == {"success": True, "result": "imported"}
         mock_client.get.assert_called_once_with(
-            "http://localhost:8086/import-package", params={"tonel": "tonel content"}
+            "http://localhost:8086/import-package",
+            params={"package_name": "TestPackage", "path": "/tmp/test"},
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
@@ -647,10 +648,10 @@ class TestInteropFunctions:
         }
         mock_get_client.return_value = mock_client
 
-        result = interop_import_package("tonel content")
+        result = interop_import_package("TestPackage", "/tmp/test")
 
         assert result == {"success": True, "result": "imported"}
-        mock_client.import_package.assert_called_once_with("tonel content")
+        mock_client.import_package.assert_called_once_with("TestPackage", "/tmp/test")
 
     @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
     def test_interop_run_package_test(self, mock_get_client):

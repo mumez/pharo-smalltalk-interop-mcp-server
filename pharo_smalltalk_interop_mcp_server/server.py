@@ -261,22 +261,26 @@ def export_package(
 @mcp.tool("import_package")
 def import_package(
     _: Context,
-    tonel_content: Annotated[
-        str, Field(description="The package content in Tonel format")
+    package_name: Annotated[
+        str, Field(description="The name of the package to import")
     ],
+    path: Annotated[
+        str, Field(description="The path to the package file to import")
+    ] = "/tmp",
 ) -> dict[str, Any]:
     """
-    Import a package from Tonel format.
+    Import a package from specified path.
 
     Args:
-        tonel_content: The package content in Tonel format
+        package_name: The name of the package to import
+        path: The path to the package file to import (default: /tmp)
 
     Returns:
         dict: API response with success/error and result
         - Success: {"success": True, "result": str} - result contains import success message
         - Error: {"success": False, "error": str} - error contains error message
     """
-    return interop_import_package(tonel_content)
+    return interop_import_package(package_name, path)
 
 
 @mcp.tool("run_package_test")
