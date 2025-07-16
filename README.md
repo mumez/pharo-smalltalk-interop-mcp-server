@@ -81,6 +81,14 @@ PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
 
 Note: The `env` section is optional and can be used to set environment variables for the MCP server.
 
+### Claude Code Configuration
+
+Add to your Claude Code settings:
+
+```bash
+claude mcp add smalltalk-interop -- uv --directory /path/to/pharo-smalltalk-interop-mcp-server run pharo-smalltalk-interop-mcp-server
+```
+
 ### MCP Tools Available
 
 This server provides 18 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
