@@ -37,7 +37,9 @@ def eval_code(_: Context, code: str) -> dict[str, Any]:
         code: The Smalltalk code to evaluate
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": any} - result contains the evaluation result
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_eval(code)
 
@@ -51,7 +53,9 @@ def get_class_source(_: Context, class_name: str) -> dict[str, Any]:
         class_name: The name of the class to retrieve source for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains the class source code
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_get_class_source(class_name)
 
@@ -66,7 +70,9 @@ def get_method_source(_: Context, class_name: str, method_name: str) -> dict[str
         method_name: The name of the method to retrieve source for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains the method source code
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_get_method_source(class_name, method_name)
 
@@ -80,7 +86,9 @@ def get_class_comment(_: Context, class_name: str) -> dict[str, Any]:
         class_name: The name of the class to retrieve comment for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains the class comment
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_get_class_comment(class_name)
 
@@ -94,7 +102,9 @@ def search_classes_like(_: Context, class_name_query: str) -> dict[str, Any]:
         class_name_query: The pattern to search for in class names
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of matching class names
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_classes_like(class_name_query)
 
@@ -108,7 +118,9 @@ def search_methods_like(_: Context, method_name_query: str) -> dict[str, Any]:
         method_name_query: The pattern to search for in method names
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of matching method names
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_methods_like(method_name_query)
 
@@ -122,7 +134,10 @@ def search_implementors(_: Context, method_name: str) -> dict[str, Any]:
         method_name: The method name to find implementors for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[dict]} - result contains list of implementors
+          Each implementor: {"class": str, "method": str}
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_implementors(method_name)
 
@@ -136,7 +151,10 @@ def search_references(_: Context, method_name: str) -> dict[str, Any]:
         method_name: The method name to find references for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[dict]} - result contains list of references
+          Each reference: {"class": str, "method": str}
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_references(method_name)
 
@@ -147,7 +165,9 @@ def list_packages(_: Context) -> dict[str, Any]:
     Get list of all packages.
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of all package names
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_list_packages()
 
@@ -161,7 +181,9 @@ def list_classes(_: Context, package_name: str) -> dict[str, Any]:
         package_name: The name of the package
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of class names in package
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_list_classes(package_name)
 
@@ -176,7 +198,9 @@ def export_package(_: Context, package_name: str, path: str = "/tmp") -> dict[st
         path: The path where to export the package (default: /tmp)
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains export success message with path
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_export_package(package_name, path)
 
@@ -190,7 +214,9 @@ def import_package(_: Context, tonel_content: str) -> dict[str, Any]:
         tonel_content: The package content in Tonel format
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains import success message
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_import_package(tonel_content)
 
@@ -204,7 +230,9 @@ def run_package_test(_: Context, package_name: str) -> dict[str, Any]:
         package_name: The package name to run tests for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains test results summary
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_run_package_test(package_name)
 
@@ -218,7 +246,9 @@ def run_class_test(_: Context, class_name: str) -> dict[str, Any]:
         class_name: The class name to run tests for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains test results summary
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_run_class_test(class_name)
 
@@ -232,7 +262,9 @@ def list_extended_classes(_: Context, package_name: str) -> dict[str, Any]:
         package_name: The name of the package
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of extended class names
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_list_extended_classes(package_name)
 
@@ -246,7 +278,10 @@ def list_methods(_: Context, package_name: str) -> dict[str, Any]:
         package_name: The name of the package
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of method signatures
+          Each method: "ClassName>>#methodName"
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_list_methods(package_name)
 
@@ -260,7 +295,9 @@ def search_traits_like(_: Context, trait_name_query: str) -> dict[str, Any]:
         trait_name_query: The pattern to search for in trait names
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[str]} - result contains list of matching trait names
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_traits_like(trait_name_query)
 
@@ -274,7 +311,10 @@ def search_references_to_class(_: Context, class_name: str) -> dict[str, Any]:
         class_name: The name of the class to find references for
 
     Returns:
-        API response with success/error and result
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": list[dict]} - result contains list of class references
+          Each reference: {"package": str, "class": str, "method": str}
+        - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_references_to_class(class_name)
 
