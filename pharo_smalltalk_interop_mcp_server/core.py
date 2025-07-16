@@ -75,9 +75,9 @@ class PharoClient:
         data = {"method_name": selector}
         return self._make_request("GET", "/search-implementors", data)
 
-    def search_references(self, selector: str) -> dict[str, Any]:
+    def search_references(self, program_symbol: str) -> dict[str, Any]:
         """Get references to a selector."""
-        data = {"program_symbol": selector}
+        data = {"program_symbol": program_symbol}
         return self._make_request("GET", "/search-references", data)
 
     def export_package(self, package_name: str, path: str = "/tmp") -> dict[str, Any]:
@@ -195,10 +195,10 @@ def interop_search_implementors(selector: str) -> dict[str, Any]:
     return client.search_implementors(selector)
 
 
-def interop_search_references(selector: str) -> dict[str, Any]:
+def interop_search_references(program_symbol: str) -> dict[str, Any]:
     """Get references to a selector."""
     client = get_pharo_client()
-    return client.search_references(selector)
+    return client.search_references(program_symbol)
 
 
 def interop_export_package(package_name: str, path: str = "/tmp") -> dict[str, Any]:

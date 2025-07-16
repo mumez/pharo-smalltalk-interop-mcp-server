@@ -182,15 +182,15 @@ def search_implementors(
 @mcp.tool("search_references")
 def search_references(
     _: Context,
-    method_name: Annotated[
-        str, Field(description="The method name to find references for")
+    method_name_or_symbol: Annotated[
+        str, Field(description="The method name or symbol to find references for")
     ],
 ) -> dict[str, Any]:
     """
-    Get all references to a method selector.
+    Get all references to a method selector or a symbol.
 
     Args:
-        method_name: The method name to find references for
+        method_name_or_symbol: The method name to find references for
 
     Returns:
         dict: API response with success/error and result
@@ -198,7 +198,7 @@ def search_references(
           Each reference: {"class": str, "method": str, "package": str}
         - Error: {"success": False, "error": str} - error contains error message
     """
-    return interop_search_references(method_name)
+    return interop_search_references(method_name_or_symbol)
 
 
 @mcp.tool("list_packages")
