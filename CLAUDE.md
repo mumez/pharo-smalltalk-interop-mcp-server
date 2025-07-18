@@ -10,6 +10,7 @@ This is a Python-based MCP (Model Context Protocol) server designed to communica
 - **Code Introspection**: Retrieve source code, comments, and metadata for classes and methods
 - **Search & Discovery**: Find classes, traits, methods, references, and implementors
 - **Package Management**: Export and import packages in Tonel format
+- **Project Installation**: Install projects using Metacello
 - **Test Execution**: Run test suites at package or class level
 
 ## Development Setup
@@ -66,13 +67,13 @@ The codebase follows a layered architecture with clean separation of concerns:
    - `PharoClient` class handles all HTTP communication with PharoSmalltalkInteropServer
    - Connects to `localhost:8086` by default
    - Comprehensive error handling for connection, HTTP, and JSON parsing errors
-   - 16 core operations mapped to Pharo API endpoints
+   - 17 core operations mapped to Pharo API endpoints
 
 1. **`server.py`** - MCP server layer
 
    - Built on FastMCP framework
    - Decorates core functions with MCP tool registration
-   - Exposes 18 MCP tools covering code evaluation, introspection, search, packages, and testing
+   - Exposes 19 MCP tools covering code evaluation, introspection, search, packages, project installation, and testing
 
 ### Tool Categories
 
@@ -80,6 +81,7 @@ The codebase follows a layered architecture with clean separation of concerns:
 - **Code Introspection**: `get_class_source`, `get_method_source`, `get_class_comment`
 - **Search & Discovery**: `search_classes_like`, `search_methods_like`, `search_traits_like`, `search_implementors`, `search_references`, `search_references_to_class`
 - **Package Management**: `export_package`, `import_package`, `list_packages`, `list_classes`, `list_extended_classes`, `list_methods`
+- **Project Installation**: `install_project` - Install projects using Metacello
 - **Test Execution**: `run_package_test`, `run_class_test`
 
 ### Key Patterns
@@ -120,4 +122,4 @@ Note: The `env` section is optional and can be used to set environment variables
 - Communication with Pharo uses HTTP to PharoSmalltalkInteropServer (port 8086)
 - All operations return structured JSON with success/error status
 - Comprehensive test suite with mock-based testing to avoid requiring a live Pharo instance
-- Tests cover all 18 endpoints and error scenarios
+- Tests cover all 19 endpoints and error scenarios

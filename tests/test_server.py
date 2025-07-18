@@ -61,6 +61,23 @@ class TestMCPToolsIntegration:
         assert result == {"success": True, "result": ["Package1", "Package2"]}
         mock_interop_list_packages.assert_called_once()
 
+    @patch("pharo_smalltalk_interop_mcp_server.core.interop_install_project")
+    def test_install_project_integration(self, mock_interop_install_project):
+        """Test install_project integration."""
+        mock_interop_install_project.return_value = {
+            "success": True,
+            "result": "Project installed successfully",
+        }
+
+        from pharo_smalltalk_interop_mcp_server.core import interop_install_project
+
+        result = interop_install_project("TestProject", "http://github.com/test/repo")
+
+        assert result == {"success": True, "result": "Project installed successfully"}
+        mock_interop_install_project.assert_called_once_with(
+            "TestProject", "http://github.com/test/repo"
+        )
+
     def test_server_main_function_exists(self):
         """Test that main function exists and is callable."""
         from pharo_smalltalk_interop_mcp_server.server import main

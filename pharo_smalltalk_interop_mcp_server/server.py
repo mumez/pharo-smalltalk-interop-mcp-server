@@ -12,6 +12,7 @@ from .core import (
     interop_get_class_source,
     interop_get_method_source,
     interop_import_package,
+    interop_install_project,
     interop_list_classes,
     interop_list_extended_classes,
     interop_list_methods,
@@ -403,6 +404,35 @@ def search_references_to_class(
         - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_search_references_to_class(class_name)
+
+
+@mcp.tool("install_project")
+def install_project(
+    _: Context,
+    project_name: Annotated[
+        str, Field(description="The name of the project to install")
+    ],
+    repository_url: Annotated[
+        str, Field(description="The repository URL for the project")
+    ],
+    load_groups: Annotated[
+        str | None, Field(description="Comma-separated list of groups to load")
+    ] = None,
+) -> dict[str, Any]:
+    """
+    Install a project using Metacello.
+
+    Args:
+        project_name: The name of the project to install
+        repository_url: The repository URL for the project
+        load_groups: Comma-separated list of groups to load (optional)
+
+    Returns:
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains installation success message
+        - Error: {"success": False, "error": str} - error contains error message
+    """
+    return interop_install_project(project_name, repository_url, load_groups)
 
 
 def main():

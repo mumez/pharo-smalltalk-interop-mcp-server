@@ -134,6 +134,18 @@ class PharoClient:
         data = {"class_name": class_name}
         return self._make_request("GET", "/search-references-to-class", data)
 
+    def install_project(
+        self,
+        project_name: str,
+        repository_url: str,
+        load_groups: str | None = None,
+    ) -> dict[str, Any]:
+        """Install a project using Metacello."""
+        data = {"project_name": project_name, "repository_url": repository_url}
+        if load_groups:
+            data["load_groups"] = load_groups
+        return self._make_request("GET", "/install-project", data)
+
     def close(self):
         """Close the HTTP client."""
         self.client.close()
@@ -265,3 +277,11 @@ def interop_search_references_to_class(class_name: str) -> dict[str, Any]:
     """Find references to a class."""
     client = get_pharo_client()
     return client.search_references_to_class(class_name)
+
+
+def interop_install_project(
+    project_name: str, repository_url: str, load_groups: str | None = None
+) -> dict[str, Any]:
+    """Install a project using Metacello."""
+    client = get_pharo_client()
+    return client.install_project(project_name, repository_url, load_groups)

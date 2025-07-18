@@ -14,6 +14,7 @@ from pharo_smalltalk_interop_mcp_server.core import (
     interop_get_class_source,
     interop_get_method_source,
     interop_import_package,
+    interop_install_project,
     interop_list_classes,
     interop_list_extended_classes,
     interop_list_methods,
@@ -487,6 +488,57 @@ class TestPharoClient:
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_install_project(self, mock_client_class):
+        """Test install_project method."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": "Project installed",
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.install_project("TestProject", "http://github.com/test/repo")
+
+        assert result == {"success": True, "result": "Project installed"}
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/install-project",
+            params={
+                "project_name": "TestProject",
+                "repository_url": "http://github.com/test/repo",
+            },
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_install_project_with_load_groups(self, mock_client_class):
+        """Test install_project method with load_groups."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": "Project installed with groups",
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.install_project(
+            "TestProject", "http://github.com/test/repo", "Core,Tests"
+        )
+
+        assert result == {"success": True, "result": "Project installed with groups"}
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/install-project",
+            params={
+                "project_name": "TestProject",
+                "repository_url": "http://github.com/test/repo",
+                "load_groups": "Core,Tests",
+            },
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
     def test_close(self, mock_client_class):
         """Test close method."""
         mock_client = Mock()
@@ -781,3 +833,39 @@ class TestInteropFunctions:
 
         assert result == {"success": True, "result": ["Class1"]}
         mock_client.search_references_to_class.assert_called_once_with("Object")
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_install_project(self, mock_get_client):
+        """Test interop_install_project function."""
+        mock_client = Mock()
+        mock_client.install_project.return_value = {
+            "success": True,
+            "result": "Project installed",
+        }
+        mock_get_client.return_value = mock_client
+
+        result = interop_install_project("TestProject", "http://github.com/test/repo")
+
+        assert result == {"success": True, "result": "Project installed"}
+        mock_client.install_project.assert_called_once_with(
+            "TestProject", "http://github.com/test/repo", None
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_install_project_with_load_groups(self, mock_get_client):
+        """Test interop_install_project function with load_groups."""
+        mock_client = Mock()
+        mock_client.install_project.return_value = {
+            "success": True,
+            "result": "Project installed with groups",
+        }
+        mock_get_client.return_value = mock_client
+
+        result = interop_install_project(
+            "TestProject", "http://github.com/test/repo", "Core,Tests"
+        )
+
+        assert result == {"success": True, "result": "Project installed with groups"}
+        mock_client.install_project.assert_called_once_with(
+            "TestProject", "http://github.com/test/repo", "Core,Tests"
+        )

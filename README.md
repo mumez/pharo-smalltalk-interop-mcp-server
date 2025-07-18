@@ -9,6 +9,7 @@ It supports:
 - Code Introspection: Retrieve source code, comments, and metadata for classes and methods
 - Search & Discovery: Find classes, traits, methods, references, and implementors
 - Package Management: Export and import packages in Tonel format
+- Project Installation: Install projects using Metacello
 - Test Execution: Run test suites at package or class level
 
 ## Prerequisites
@@ -91,7 +92,7 @@ claude mcp add smalltalk-interop -- uv --directory /path/to/pharo-smalltalk-inte
 
 ### MCP Tools Available
 
-This server provides 18 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
+This server provides 19 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
 
 #### Code Evaluation
 
@@ -120,6 +121,10 @@ This server provides 18 MCP tools that map to all [PharoSmalltalkInteropServer](
 - **`list_methods`**: List methods in a package
 - **`export_package`**: Export a package in Tonel format
 - **`import_package`**: Import a package from specified path
+
+#### Project Installation
+
+- **`install_project`**: Install a project using Metacello with optional load groups
 
 #### Test Execution
 
@@ -178,14 +183,14 @@ pharo-smalltalk-interop-mcp-server/
 The test suite uses mock-based testing to ensure:
 
 - **No external dependencies**: Tests run without requiring a live Pharo instance
-- **Comprehensive coverage**: All 18 endpoints and error scenarios are tested
+- **Comprehensive coverage**: All 19 endpoints and error scenarios are tested
 - **Fast execution**: Tests complete in under 1 second
 - **Reliable results**: Tests are deterministic and don't depend on external state
 
 Test coverage includes:
 
 - HTTP client functionality (`PharoClient` class)
-- All 18 Pharo interop operations
+- All 19 Pharo interop operations
 - Error handling (connection errors, HTTP errors, JSON parsing errors)
 - MCP server initialization and tool registration
 - Integration between core functions and MCP tools
