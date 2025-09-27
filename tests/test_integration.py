@@ -252,8 +252,8 @@ class TestPharoIntegration:
 
             if "receiver" in error_data:
                 receiver = error_data["receiver"]
-                assert "class" in receiver
-                assert "self" in receiver
+                assert receiver["class"] == "SmallInteger"
+                assert receiver["self"] == "1"
                 # For 1/0, receiver is SmallInteger (1) which has no instance variables
                 if "variables" in receiver:
                     assert isinstance(receiver["variables"], dict)
@@ -286,8 +286,7 @@ class TestPharoIntegration:
 
             if "receiver" in error_data:
                 receiver = error_data["receiver"]
-                assert "class" in receiver
-                assert "self" in receiver
+                assert receiver["class"] == "Dictionary"
                 # For Dictionary new zork, receiver is Dictionary instance which has instance variables
                 if "variables" in receiver:
                     assert isinstance(receiver["variables"], dict)
