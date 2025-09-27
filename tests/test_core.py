@@ -869,3 +869,90 @@ class TestInteropFunctions:
         mock_client.install_project.assert_called_once_with(
             "TestProject", "http://github.com/test/repo", "Core,Tests"
         )
+
+
+class TestEnhancedErrorHandling:
+    """Test enhanced error handling functionality."""
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_make_request_with_enhanced_error_response(self, mock_client_class):
+        """Test _make_request handling enhanced error response format."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+
+        # Enhanced error response format
+        enhanced_error = {
+            "error": {
+                "description": "ZeroDivide: division by zero",
+                "stack_trace": "SmallInteger>>/ (SmallInteger.class:123)\nUndefinedObject>>DoIt (DoIt.class:1)\nCompiler>>evaluate:in: (Compiler.class:456)",
+                "receiver": {"class": "SmallInteger", "self": "1", "variables": {}},
+            }
+        }
+        mock_response.json.return_value = enhanced_error
+
+        mock_client.post.side_effect = httpx.HTTPStatusError(
+            "Server Error", request=Mock(), response=mock_response
+        )
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client._make_request("POST", "/eval", {"code": "1 / 0"})
+
+        expected = {
+            "success": False,
+            "error": {
+                "description": "ZeroDivide: division by zero",
+                "stack_trace": "SmallInteger>>/ (SmallInteger.class:123)\nUndefinedObject>>DoIt (DoIt.class:1)\nCompiler>>evaluate:in: (Compiler.class:456)",
+                "receiver": {"class": "SmallInteger", "self": "1", "variables": {}},
+            },
+        }
+        assert result == expected
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_make_request_with_simple_error_response(self, mock_client_class):
+        """Test _make_request handling simple error response format (backward compatibility)."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+
+        # Simple error response format
+        simple_error = {"error": "Class not found: NonExistentClass"}
+        mock_response.json.return_value = simple_error
+
+        mock_client.post.side_effect = httpx.HTTPStatusError(
+            "Server Error", request=Mock(), response=mock_response
+        )
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client._make_request(
+            "POST", "/get-class-source", {"class_name": "NonExistentClass"}
+        )
+
+        expected = {"success": False, "error": "Class not found: NonExistentClass"}
+        assert result == expected
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_make_request_with_non_json_error_response(self, mock_client_class):
+        """Test _make_request handling non-JSON error response (fallback)."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+        mock_response.json.side_effect = json.JSONDecodeError("Invalid JSON", "", 0)
+
+        mock_client.post.side_effect = httpx.HTTPStatusError(
+            "Server Error", request=Mock(), response=mock_response
+        )
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client._make_request("POST", "/eval", {"code": "invalid"})
+
+        assert result == {
+            "success": False,
+            "error": "HTTP error 500: Internal Server Error",
+        }

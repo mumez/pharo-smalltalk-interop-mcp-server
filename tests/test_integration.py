@@ -230,6 +230,92 @@ class TestPharoIntegration:
         # Should return 2 (remainder of 5 divided by 3)
         assert response["result"] == 2
 
+    def test_eval_zero_division_error(self):
+        """Test evaluation that causes ZeroDivide error."""
+        response = self.client.evaluate("1 / 0")
+        assert response["success"] is False
+        assert "error" in response
+
+        error_data = response["error"]
+        if isinstance(error_data, dict):
+            # Enhanced error format
+            assert "description" in error_data
+            assert (
+                "ZeroDivide" in error_data["description"]
+                or "division by zero" in error_data["description"]
+            )
+
+            # Check for enhanced error details
+            if "stack_trace" in error_data:
+                assert isinstance(error_data["stack_trace"], str)
+                assert len(error_data["stack_trace"]) > 0
+
+            if "receiver" in error_data:
+                receiver = error_data["receiver"]
+                assert "class" in receiver
+                assert "self" in receiver
+                # For 1/0, receiver is SmallInteger (1) which has no instance variables
+                if "variables" in receiver:
+                    assert isinstance(receiver["variables"], dict)
+                    assert len(receiver["variables"]) == 0
+        else:
+            # Simple error format
+            assert isinstance(error_data, str)
+            assert "ZeroDivide" in error_data or "division by zero" in error_data
+
+    def test_eval_message_not_understood_error(self):
+        """Test evaluation that causes MessageNotUnderstood error."""
+        response = self.client.evaluate("Dictionary new zork")
+        assert response["success"] is False
+        assert "error" in response
+
+        error_data = response["error"]
+        if isinstance(error_data, dict):
+            # Enhanced error format
+            assert "description" in error_data
+            assert (
+                "MessageNotUnderstood" in error_data["description"]
+                or "did not understand" in error_data["description"]
+                or "does not understand" in error_data["description"]
+            )
+
+            # Check for enhanced error details
+            if "stack_trace" in error_data:
+                assert isinstance(error_data["stack_trace"], str)
+                assert len(error_data["stack_trace"]) > 0
+
+            if "receiver" in error_data:
+                receiver = error_data["receiver"]
+                assert "class" in receiver
+                assert "self" in receiver
+                # For Dictionary new zork, receiver is Dictionary instance which has instance variables
+                if "variables" in receiver:
+                    assert isinstance(receiver["variables"], dict)
+                    assert (
+                        len(receiver["variables"]) > 0
+                    )  # Dictionary should have internal state
+        else:
+            # Simple error format
+            assert isinstance(error_data, str)
+            assert (
+                "MessageNotUnderstood" in error_data
+                or "did not understand" in error_data
+                or "does not understand" in error_data
+            )
+
+    def test_eval_syntax_error(self):
+        """Test evaluation with syntax error."""
+        response = self.client.evaluate("1 + ")
+        assert response["success"] is False
+        assert "error" in response
+
+        error_data = response["error"]
+        # Could be simple or enhanced error format depending on server version
+        if isinstance(error_data, dict):
+            assert "description" in error_data
+        else:
+            assert isinstance(error_data, str)
+
     def test_export_package(self):
         """Test export and import of Sis-Tests-Dummy package."""
         # Use a temporary directory for export
