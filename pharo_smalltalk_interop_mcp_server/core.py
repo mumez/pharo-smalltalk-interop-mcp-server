@@ -38,24 +38,10 @@ class PharoClient:
         except httpx.RequestError as e:
             return {"success": False, "error": f"Connection error: {e}"}
         except httpx.HTTPStatusError as e:
-            try:
-                # Try to parse response body as JSON for detailed error info
-                error_response = e.response.json()
-                if isinstance(error_response, dict) and "error" in error_response:
-                    # Return the detailed error response as-is if it has the expected structure
-                    return {"success": False, **error_response}
-                else:
-                    # Fallback to simple error message
-                    return {
-                        "success": False,
-                        "error": f"HTTP error {e.response.status_code}: {e.response.text}",
-                    }
-            except json.JSONDecodeError:
-                # Fallback to simple error message if response is not valid JSON
-                return {
-                    "success": False,
-                    "error": f"HTTP error {e.response.status_code}: {e.response.text}",
-                }
+            return {
+                "success": False,
+                "error": f"HTTP error {e.response.status_code}: {e.response.text}",
+            }
         except json.JSONDecodeError as e:
             return {"success": False, "error": f"Invalid JSON response: {e}"}
 
