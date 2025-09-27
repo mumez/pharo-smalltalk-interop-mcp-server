@@ -67,6 +67,7 @@ The codebase follows a layered architecture with clean separation of concerns:
    - `PharoClient` class handles all HTTP communication with PharoSmalltalkInteropServer
    - Connects to `localhost:8086` by default
    - Comprehensive error handling for connection, HTTP, and JSON parsing errors
+   - Enhanced error handling supporting detailed error information from PharoSmalltalkInteropServer
    - 17 core operations mapped to Pharo API endpoints
 
 1. **`server.py`** - MCP server layer
@@ -87,9 +88,56 @@ The codebase follows a layered architecture with clean separation of concerns:
 ### Key Patterns
 
 - **Singleton HTTP Client**: Global `PharoClient` instance with connection reuse
-- **Error Handling**: Structured JSON responses with success/error fields
+- **Error Handling**: Structured JSON responses with success/error fields, automatic handling of both simple and detailed error formats
 - **Type Safety**: Full type hints throughout codebase
 - **Separation of Concerns**: Core logic separate from MCP decorators
+
+## Enhanced Error Handling
+
+The MCP server supports enhanced error information from PharoSmalltalkInteropServer v2.0.0+, providing detailed debugging information while maintaining backward compatibility.
+
+### Error Response Formats
+
+**Simple Error Format** (Legacy compatibility):
+
+```json
+{
+  "success": false,
+  "error": "Class not found: NonExistentClass"
+}
+```
+
+**Enhanced Error Format** (New detailed format):
+
+```json
+{
+  "success": false,
+  "error": {
+    "description": "ZeroDivide: division by zero",
+    "stack_trace": "SmallInteger>>/ (SmallInteger.class:123)\nUndefinedObject>>DoIt (DoIt.class:1)\nCompiler>>evaluate:in: (Compiler.class:456)",
+    "receiver": {
+      "class": "SmallInteger",
+      "self": "1",
+      "variables": {"value": 1}
+    }
+  }
+}
+```
+
+### Usage
+
+MCP tools return error responses directly from the Pharo server. Enhanced errors include:
+
+- **`description`**: Error message
+- **`stack_trace`**: Complete stack trace (string)
+- **`receiver`**: Object that received the failing message with class, self representation, and instance variables
+
+### Compatibility
+
+- **PharoSmalltalkInteropServer v1.x**: Simple string error messages (backward compatible)
+- **PharoSmalltalkInteropServer v2.0.0+**: Enhanced error objects with stack traces and receiver information
+
+The Pharo server uses Python-compatible naming conventions (`stack_trace`, `variables`). No code changes are required when upgrading the Pharo server.
 
 ## MCP Integration
 
@@ -121,5 +169,6 @@ Note: The `env` section is optional and can be used to set environment variables
 - Implementation follows MCP server patterns with FastMCP decorators
 - Communication with Pharo uses HTTP to PharoSmalltalkInteropServer (port 8086)
 - All operations return structured JSON with success/error status
+- Enhanced error handling passes through detailed error information from Pharo server
 - Comprehensive test suite with mock-based testing to avoid requiring a live Pharo instance
 - Tests cover all 19 endpoints and error scenarios
