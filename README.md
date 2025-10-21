@@ -23,13 +23,13 @@ It supports:
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd pharo-smalltalk-interop-mcp-server
+git clone https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git
 ```
 
 2. Install dependencies using uv:
 
 ```bash
+cd pharo-smalltalk-interop-mcp-server
 uv sync --dev
 ```
 
@@ -52,8 +52,8 @@ You can configure the server using environment variables:
 Examples:
 
 ```bash
-# Connect to PharoSmalltalkInteropServer on port 8081
-PHARO_SIS_PORT=8081 uv run pharo-smalltalk-interop-mcp-server
+# Connect to PharoSmalltalkInteropServer on port 8086 (default)
+PHARO_SIS_PORT=8086 uv run pharo-smalltalk-interop-mcp-server
 
 # Connect to PharoSmalltalkInteropServer on port 9999
 PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
@@ -64,7 +64,7 @@ PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
 ```json:mcp.json
 {
   "mcpServers": {
-    "pharo-smalltalk-interop-mcp-server": {
+    "smalltalk-interop": {
       "command": "uv",
       "args": [
         "--directory",
@@ -73,7 +73,7 @@ PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
         "pharo-smalltalk-interop-mcp-server"
       ],
       "env": {
-        "PHARO_SIS_PORT": "8081"
+        "PHARO_SIS_PORT": "8086"
       }
     }
   }
@@ -87,7 +87,7 @@ Note: The `env` section is optional and can be used to set environment variables
 Add to your Claude Code settings:
 
 ```bash
-claude mcp add smalltalk-interop -- uv --directory /path/to/pharo-smalltalk-interop-mcp-server run pharo-smalltalk-interop-mcp-server
+claude mcp add -s user smalltalk-interop -- uv --directory /path/to/pharo-smalltalk-interop-mcp-server run pharo-smalltalk-interop-mcp-server
 ```
 
 ### MCP Tools Available
