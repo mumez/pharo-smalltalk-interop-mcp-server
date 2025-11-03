@@ -497,3 +497,95 @@ class TestPharoIntegration:
         expected_classes = ["SisDummyTest", "SisDummyTest2"]
         for cls in expected_classes:
             assert cls in classes
+
+    def test_read_screen_default_parameters(self):
+        """Test read_screen with default parameters."""
+        response = self.client.read_screen()
+        assert response["success"] is True
+        assert "result" in response
+
+        result = response["result"]
+        assert "screenshot" in result
+        assert "structure" in result
+        assert "summary" in result
+        assert "target_type" in result
+        assert result["target_type"] == "world"
+
+    def test_read_screen_structure_content(self):
+        """Test read_screen returns valid structure data."""
+        response = self.client.read_screen()
+        assert response["success"] is True
+
+        result = response["result"]
+        structure = result["structure"]
+
+        # Check structure contains expected fields
+        assert "totalMorphs" in structure
+        assert "morphs" in structure
+        assert isinstance(structure["totalMorphs"], int)
+        assert isinstance(structure["morphs"], list)
+        assert structure["totalMorphs"] > 0
+
+        # Check morph data format
+        for morph in structure["morphs"]:
+            assert "class" in morph
+            assert "visible" in morph
+            assert "bounds" in morph
+            assert "owner" in morph
+
+            # Check bounds structure
+            bounds = morph["bounds"]
+            assert "x" in bounds
+            assert "y" in bounds
+            assert "width" in bounds
+            assert "height" in bounds
+
+    def test_read_screen_screenshot_captured(self):
+        """Test read_screen captures screenshot."""
+        import os
+
+        response = self.client.read_screen(capture_screenshot=True)
+        assert response["success"] is True
+
+        result = response["result"]
+        screenshot_path = result["screenshot"]
+
+        # Screenshot should be a string path
+        assert isinstance(screenshot_path, str)
+        # File should exist
+        assert os.path.exists(screenshot_path), f"Screenshot not found at {screenshot_path}"
+        # File should have content
+        assert os.path.getsize(screenshot_path) > 0
+
+    def test_read_screen_without_screenshot(self):
+        """Test read_screen without capturing screenshot."""
+        response = self.client.read_screen(capture_screenshot=False)
+        assert response["success"] is True
+
+        result = response["result"]
+        # Screenshot should not be in result when capture_screenshot=False
+        assert "screenshot" not in result or result.get("screenshot") is None
+
+    def test_read_screen_target_type_world(self):
+        """Test read_screen with target_type='world'."""
+        response = self.client.read_screen(target_type="world")
+        assert response["success"] is True
+
+        result = response["result"]
+        assert result["target_type"] == "world"
+        assert "structure" in result
+        assert "morphs" in result["structure"]
+
+    def test_read_screen_has_summary(self):
+        """Test read_screen returns human-readable summary."""
+        response = self.client.read_screen()
+        assert response["success"] is True
+
+        result = response["result"]
+        summary = result["summary"]
+
+        # Summary should be a non-empty string
+        assert isinstance(summary, str)
+        assert len(summary) > 0
+        # Should mention morphs count
+        assert "morph" in summary.lower()
