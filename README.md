@@ -20,6 +20,18 @@ It supports:
 
 ## Installation
 
+### Quick Start (using uvx)
+
+The easiest way to run the server without cloning the repository:
+
+```bash
+uvx --from git+https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git pharo-smalltalk-interop-mcp-server
+```
+
+### Development Installation
+
+To set up for development:
+
 1. Clone the repository:
 
 ```bash
@@ -37,7 +49,13 @@ uv sync --dev
 
 ### Running the MCP Server
 
-Start the server:
+**Using uvx (no installation required):**
+
+```bash
+uvx --from git+https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git pharo-smalltalk-interop-mcp-server
+```
+
+**Using uv (after cloning the repository):**
 
 ```bash
 uv run pharo-smalltalk-interop-mcp-server
@@ -51,16 +69,38 @@ You can configure the server using environment variables:
 
 Examples:
 
+**Using uvx:**
 ```bash
-# Connect to PharoSmalltalkInteropServer on port 8086 (default)
-PHARO_SIS_PORT=8086 uv run pharo-smalltalk-interop-mcp-server
+PHARO_SIS_PORT=8086 uvx --from git+https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git pharo-smalltalk-interop-mcp-server
+```
 
-# Connect to PharoSmalltalkInteropServer on port 9999
+**Using uv:**
+```bash
 PHARO_SIS_PORT=9999 uv run pharo-smalltalk-interop-mcp-server
 ```
 
 ### Cursor MCP settings
 
+**Using uvx (recommended):**
+```json:mcp.json
+{
+  "mcpServers": {
+    "smalltalk-interop": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git",
+        "pharo-smalltalk-interop-mcp-server"
+      ],
+      "env": {
+        "PHARO_SIS_PORT": "8086"
+      }
+    }
+  }
+}
+```
+
+**Using uv (after cloning):**
 ```json:mcp.json
 {
   "mcpServers": {
@@ -84,8 +124,12 @@ Note: The `env` section is optional and can be used to set environment variables
 
 ### Claude Code Configuration
 
-Add to your Claude Code settings:
+**Using uvx (recommended):**
+```bash
+claude mcp add -s user smalltalk-interop -- uvx --from git+https://github.com/mumez/pharo-smalltalk-interop-mcp-server.git pharo-smalltalk-interop-mcp-server
+```
 
+**Using uv (after cloning):**
 ```bash
 claude mcp add -s user smalltalk-interop -- uv --directory /path/to/pharo-smalltalk-interop-mcp-server run pharo-smalltalk-interop-mcp-server
 ```
