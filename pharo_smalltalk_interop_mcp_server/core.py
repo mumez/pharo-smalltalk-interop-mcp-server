@@ -146,6 +146,18 @@ class PharoClient:
             data["load_groups"] = load_groups
         return self._make_request("GET", "/install-project", data)
 
+    def read_screen(
+        self,
+        target_type: str = "world",
+        capture_screenshot: bool = True,
+    ) -> dict[str, Any]:
+        """Read and inspect Pharo UI structure with screenshot."""
+        data = {
+            "target_type": target_type,
+            "capture_screenshot": capture_screenshot,
+        }
+        return self._make_request("GET", "/read-screen", data)
+
     def close(self):
         """Close the HTTP client."""
         self.client.close()
@@ -285,3 +297,12 @@ def interop_install_project(
     """Install a project using Metacello."""
     client = get_pharo_client()
     return client.install_project(project_name, repository_url, load_groups)
+
+
+def interop_read_screen(
+    target_type: str = "world",
+    capture_screenshot: bool = True,
+) -> dict[str, Any]:
+    """Read and inspect Pharo UI structure with screenshot."""
+    client = get_pharo_client()
+    return client.read_screen(target_type, capture_screenshot)

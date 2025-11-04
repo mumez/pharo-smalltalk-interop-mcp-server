@@ -19,6 +19,7 @@ from pharo_smalltalk_interop_mcp_server.core import (
     interop_list_extended_classes,
     interop_list_methods,
     interop_list_packages,
+    interop_read_screen,
     interop_run_class_test,
     interop_run_package_test,
     interop_search_classes_like,
@@ -549,6 +550,266 @@ class TestPharoClient:
 
         mock_client.close.assert_called_once()
 
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen(self, mock_client_class):
+        """Test read_screen method with default parameters."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {
+                "structure": {"totalMorphs": 3, "morphs": []},
+                "summary": "World with 3 top-level morphs",
+                "screenshot": "/tmp/pharo-ui.png",
+                "target_type": "world",
+            },
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen()
+
+        assert result["success"] is True
+        assert "result" in result
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={
+                "target_type": "world",
+                "capture_screenshot": True,
+            },
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen_with_parameters(self, mock_client_class):
+        """Test read_screen method with custom parameters."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {"structure": {}, "summary": "World UI"},
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen(target_type="spec", capture_screenshot=False)
+
+        assert result["success"] is True
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={
+                "target_type": "spec",
+                "capture_screenshot": False,
+            },
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen_world(self, mock_client_class):
+        """Test read_screen with target_type='world'."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {
+                "structure": {
+                    "totalMorphs": 5,
+                    "displayedMorphCount": 5,
+                    "morphs": [
+                        {
+                            "class": "WorldMorph",
+                            "visible": True,
+                            "bounds": {"x": 0, "y": 0, "width": 1920, "height": 1200},
+                        }
+                    ],
+                },
+                "summary": "World with 5 top-level morphs",
+                "screenshot": "/tmp/pharo-ui-world.png",
+                "target_type": "world",
+            },
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen(target_type="world", capture_screenshot=True)
+
+        assert result["success"] is True
+        assert result["result"]["target_type"] == "world"
+        assert "totalMorphs" in result["result"]["structure"]
+        assert "morphs" in result["result"]["structure"]
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={"target_type": "world", "capture_screenshot": True},
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen_spec(self, mock_client_class):
+        """Test read_screen with target_type='spec' including nested presenter hierarchy."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {
+                "structure": {
+                    "windowCount": 2,
+                    "presenters": [
+                        {
+                            "class": "SpWindowPresenter",
+                            "title": "Welcome",
+                            "extent": "(700@550)",
+                            "hasMenu": False,
+                            "hasToolbar": False,
+                            "hasStatusBar": False,
+                            "isResizable": True,
+                            "presenter": {
+                                "class": "StWelcomeBrowser",
+                                "childCount": 2,
+                                "isVisible": True,
+                                "children": [
+                                    {
+                                        "class": "SpMillerColumnPresenter",
+                                        "childCount": 7,
+                                        "isVisible": True,
+                                        "children": [],
+                                    },
+                                    {
+                                        "class": "SpPaginatorPresenter",
+                                        "childCount": 0,
+                                        "isVisible": True,
+                                        "children": [],
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            "class": "SpWindowPresenter",
+                            "title": "Label presenter",
+                            "presenter": {
+                                "class": "SpLabelPresenter",
+                                "label": "Pharo 12 Test",
+                                "isEnabled": True,
+                                "isVisible": True,
+                                "childCount": 0,
+                                "children": [],
+                            },
+                        },
+                    ],
+                },
+                "summary": "2 Spec presenter(s)",
+                "target_type": "spec",
+            },
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen(target_type="spec", capture_screenshot=False)
+
+        assert result["success"] is True
+        assert result["result"]["target_type"] == "spec"
+        assert result["result"]["structure"]["windowCount"] == 2
+        assert "presenters" in result["result"]["structure"]
+        # Check nested hierarchy
+        presenter = result["result"]["structure"]["presenters"][0]["presenter"]
+        assert presenter["class"] == "StWelcomeBrowser"
+        assert presenter["childCount"] == 2
+        assert len(presenter["children"]) == 2
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={"target_type": "spec", "capture_screenshot": False},
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen_roassal(self, mock_client_class):
+        """Test read_screen with target_type='roassal' including shape details."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {
+                "structure": {
+                    "canvasCount": 1,
+                    "canvases": [
+                        {
+                            "class": "RSAthensMorph",
+                            "canvasClass": "RSCanvas",
+                            "visible": True,
+                            "bounds": {"x": 203, "y": 145, "width": 490, "height": 467},
+                            "backgroundColor": "Color blue",
+                            "zoomLevel": "1.0",
+                            "shapeCount": 5,
+                            "shapes": [
+                                {
+                                    "class": "RSCircle",
+                                    "color": "(Color r: 1.0 g: 0.0 b: 0.0 alpha: 0.2)",
+                                    "position": "(0.0@0.0)",
+                                    "extent": "(5.0@5.0)",
+                                },
+                                {
+                                    "class": "RSCircle",
+                                    "color": "(Color r: 1.0 g: 0.0 b: 0.0 alpha: 0.4)",
+                                    "position": "(0.0@0.0)",
+                                    "extent": "(10.0@10.0)",
+                                },
+                                {
+                                    "class": "RSCircle",
+                                    "color": "Color red",
+                                    "position": "(0.0@0.0)",
+                                    "extent": "(25.0@25.0)",
+                                },
+                            ],
+                            "edgeCount": 0,
+                            "edges": [],
+                            "nodeCount": 0,
+                            "canvasExtent": "(490.0@467.0)",
+                        }
+                    ],
+                },
+                "summary": "1 Roassal canvas(es)",
+                "target_type": "roassal",
+            },
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen(target_type="roassal", capture_screenshot=True)
+
+        assert result["success"] is True
+        assert result["result"]["target_type"] == "roassal"
+        assert "canvases" in result["result"]["structure"]
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={"target_type": "roassal", "capture_screenshot": True},
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_read_screen_no_screenshot(self, mock_client_class):
+        """Test read_screen without screenshot."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {
+                "structure": {"totalMorphs": 3, "morphs": []},
+                "summary": "World with 3 top-level morphs",
+                "target_type": "world",
+            },
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.read_screen(target_type="world", capture_screenshot=False)
+
+        assert result["success"] is True
+        assert "screenshot" not in result["result"]
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/read-screen",
+            params={"target_type": "world", "capture_screenshot": False},
+        )
+
 
 class TestGlobalClientFunctions:
     """Test global client functions."""
@@ -868,6 +1129,47 @@ class TestInteropFunctions:
         assert result == {"success": True, "result": "Project installed with groups"}
         mock_client.install_project.assert_called_once_with(
             "TestProject", "http://github.com/test/repo", "Core,Tests"
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_read_screen(self, mock_get_client):
+        """Test interop_read_screen function."""
+        mock_client = Mock()
+        mock_client.read_screen.return_value = {
+            "success": True,
+            "result": {
+                "structure": {"totalMorphs": 2, "morphs": []},
+                "summary": "World UI",
+                "screenshot": "/tmp/pharo-ui.png",
+                "target_type": "world",
+            },
+        }
+        mock_get_client.return_value = mock_client
+
+        result = interop_read_screen()
+
+        assert result == mock_client.read_screen.return_value
+        # interop_read_screen calls with positional args
+        mock_client.read_screen.assert_called_once_with(
+            "world", True
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_read_screen_with_parameters(self, mock_get_client):
+        """Test interop_read_screen function with custom parameters."""
+        mock_client = Mock()
+        mock_client.read_screen.return_value = {
+            "success": True,
+            "result": {"structure": {}, "summary": "Spec UI"},
+        }
+        mock_get_client.return_value = mock_client
+
+        result = interop_read_screen(target_type="spec", capture_screenshot=False)
+
+        assert result["success"] is True
+        # interop_read_screen calls with positional args
+        mock_client.read_screen.assert_called_once_with(
+            "spec", False
         )
 
 
