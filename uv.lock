@@ -890,7 +890,7 @@ wheels = [
 
 [[package]]
 name = "pharo-smalltalk-interop-mcp-server"
-version = "0.1.1"
+version = "3.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
