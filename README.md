@@ -11,6 +11,7 @@ It supports:
 - Package Management: Export and import packages in Tonel format
 - Project Installation: Install projects using Metacello
 - Test Execution: Run test suites at package or class level
+- UI Debugging: Capture screenshots and inspect UI structure for World morphs, Spec presenters, and Roassal visualizations
 
 ## Prerequisites
 
@@ -190,6 +191,7 @@ This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](
 The `read_screen` tool captures screenshots and extracts UI structure for debugging Pharo UI issues.
 
 **Parameters:**
+
 - `target_type` (string, default: 'world'): UI type to inspect ('world' for morphs, 'spec' for windows, 'roassal' for visualizations)
 - `capture_screenshot` (boolean, default: true): Include PNG screenshot in response
 
@@ -211,6 +213,7 @@ read_screen(target_type='roassal', capture_screenshot=false)
 **Extracted Data Includes:**
 
 *World (morphs):*
+
 - Class name and type identification
 - Bounds (x, y, width, height coordinates)
 - Visibility state
@@ -220,6 +223,7 @@ read_screen(target_type='roassal', capture_screenshot=false)
 - Text content (if available)
 
 Example output:
+
 ```json
 {
   "totalMorphs": 12,
@@ -238,6 +242,7 @@ Example output:
 ```
 
 *Spec (presenters):*
+
 - Window title and class name
 - Geometry (extent, position)
 - Window state (maximized, minimized, resizable)
@@ -247,6 +252,7 @@ Example output:
 - Enablement and visibility state
 
 Example output:
+
 ```json
 {
   "windowCount": 1,
@@ -268,6 +274,7 @@ Example output:
 ```
 
 *Roassal (visualizations):*
+
 - Canvas bounds and visibility state
 - Canvas class identification
 - Background color and zoom level
@@ -276,6 +283,7 @@ Example output:
 - Node and edge counts
 
 Example output:
+
 ```json
 {
   "canvasCount": 1,
