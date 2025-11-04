@@ -553,7 +553,9 @@ class TestPharoIntegration:
         # Screenshot should be a string path
         assert isinstance(screenshot_path, str)
         # File should exist
-        assert os.path.exists(screenshot_path), f"Screenshot not found at {screenshot_path}"
+        assert os.path.exists(screenshot_path), (
+            f"Screenshot not found at {screenshot_path}"
+        )
         # File should have content
         assert os.path.getsize(screenshot_path) > 0
 

@@ -440,7 +440,10 @@ def install_project(
 def read_screen(
     _: Context,
     target_type: Annotated[
-        str, Field(description="UI type to inspect: 'world' (morphs), 'spec' (windows), or 'roassal' (visualizations)")
+        str,
+        Field(
+            description="UI type to inspect: 'world' (morphs), 'spec' (windows), or 'roassal' (visualizations)"
+        ),
     ] = "world",
     capture_screenshot: Annotated[
         bool, Field(description="Include PNG screenshot in response")

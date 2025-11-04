@@ -1150,9 +1150,7 @@ class TestInteropFunctions:
 
         assert result == mock_client.read_screen.return_value
         # interop_read_screen calls with positional args
-        mock_client.read_screen.assert_called_once_with(
-            "world", True
-        )
+        mock_client.read_screen.assert_called_once_with("world", True)
 
     @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
     def test_interop_read_screen_with_parameters(self, mock_get_client):
@@ -1168,9 +1166,7 @@ class TestInteropFunctions:
 
         assert result["success"] is True
         # interop_read_screen calls with positional args
-        mock_client.read_screen.assert_called_once_with(
-            "spec", False
-        )
+        mock_client.read_screen.assert_called_once_with("spec", False)
 
 
 class TestEnhancedErrorHandling:
