@@ -12,6 +12,7 @@ This is a Python-based MCP (Model Context Protocol) server designed to communica
 - **Package Management**: Export and import packages in Tonel format
 - **Project Installation**: Install projects using Metacello
 - **Test Execution**: Run test suites at package or class level
+- **UI Debugging**: Capture screenshots and inspect UI structure for World morphs, Spec presenters, and Roassal visualizations
 
 ## Development Setup
 
@@ -68,13 +69,13 @@ The codebase follows a layered architecture with clean separation of concerns:
    - Connects to `localhost:8086` by default
    - Comprehensive error handling for connection, HTTP, and JSON parsing errors
    - Enhanced error handling supporting detailed error information from PharoSmalltalkInteropServer
-   - 17 core operations mapped to Pharo API endpoints
+   - 18 core operations mapped to Pharo API endpoints
 
 1. **`server.py`** - MCP server layer
 
    - Built on FastMCP framework
    - Decorates core functions with MCP tool registration
-   - Exposes 19 MCP tools covering code evaluation, introspection, search, packages, project installation, and testing
+   - Exposes 20 MCP tools covering code evaluation, introspection, search, packages, project installation, testing, and UI debugging
 
 ### Tool Categories
 
@@ -84,6 +85,7 @@ The codebase follows a layered architecture with clean separation of concerns:
 - **Package Management**: `export_package`, `import_package`, `list_packages`, `list_classes`, `list_extended_classes`, `list_methods`
 - **Project Installation**: `install_project` - Install projects using Metacello
 - **Test Execution**: `run_package_test`, `run_class_test`
+- **UI Debugging**: `read_screen` - Capture screenshots and extract UI structure
 
 ### Key Patterns
 
@@ -139,6 +141,56 @@ MCP tools return error responses directly from the Pharo server. Enhanced errors
 
 The Pharo server uses Python-compatible naming conventions (`stack_trace`, `variables`). No code changes are required when upgrading the Pharo server.
 
+## UI Debugging
+
+The `read_screen` tool provides comprehensive UI inspection capabilities for debugging Pharo interfaces. It captures screenshots and extracts complete UI structure information.
+
+### Supported UI Types
+
+- **`world`**: World morphs (default) - Inspect the Pharo world and all visible morphs
+- **`spec`**: Spec windows - Inspect Spec presenters and their hierarchical structure
+- **`roassal`**: Roassal visualizations - Inspect Roassal canvas elements and shapes
+
+### Parameters
+
+- **`target_type`**: UI type to inspect (default: `"world"`)
+- **`capture_screenshot`**: Include PNG screenshot in response (default: `true`)
+
+### Response Format
+
+```json
+{
+  "success": true,
+  "result": {
+    "screenshot": "/tmp/pharo_screenshot_20250105_123456.png",
+    "target_type": "world",
+    "structure": {
+      "morphs": [...],
+      "count": 42,
+      "details": "..."
+    },
+    "summary": "World contains 42 morphs including..."
+  }
+}
+```
+
+### Usage Example
+
+```python
+# Capture world morphs with screenshot
+result = read_screen(target_type="world", capture_screenshot=True)
+
+# Inspect Spec windows without screenshot
+result = read_screen(target_type="spec", capture_screenshot=False)
+
+# Inspect Roassal visualizations
+result = read_screen(target_type="roassal", capture_screenshot=True)
+```
+
+### Screenshot Storage
+
+Screenshots are saved to `/tmp/` with timestamped filenames: `pharo_screenshot_YYYYMMDD_HHMMSS.png`
+
 ## MCP Integration
 
 The server is designed to be configured in Cursor's mcp.json:
@@ -171,4 +223,4 @@ Note: The `env` section is optional and can be used to set environment variables
 - All operations return structured JSON with success/error status
 - Enhanced error handling passes through detailed error information from Pharo server
 - Comprehensive test suite with mock-based testing to avoid requiring a live Pharo instance
-- Tests cover all 19 endpoints and error scenarios
+- Tests cover all 20 endpoints and error scenarios

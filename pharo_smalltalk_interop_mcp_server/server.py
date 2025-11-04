@@ -17,6 +17,7 @@ from .core import (
     interop_list_extended_classes,
     interop_list_methods,
     interop_list_packages,
+    interop_read_screen,
     interop_run_class_test,
     interop_run_package_test,
     interop_search_classes_like,
@@ -433,6 +434,38 @@ def install_project(
         - Error: {"success": False, "error": str} - error contains error message
     """
     return interop_install_project(project_name, repository_url, load_groups)
+
+
+@mcp.tool("read_screen")
+def read_screen(
+    _: Context,
+    target_type: Annotated[
+        str,
+        Field(
+            description="UI type to inspect: 'world' (morphs), 'spec' (windows), or 'roassal' (visualizations)"
+        ),
+    ] = "world",
+    capture_screenshot: Annotated[
+        bool, Field(description="Include PNG screenshot in response")
+    ] = True,
+) -> dict[str, Any]:
+    """
+    Comprehensive UI screen reader for debugging Pharo interfaces.
+
+    Captures screenshot and extracts complete UI structure for World morphs, Spec presenters, and Roassal visualizations.
+
+    Args:
+        target_type: 'world' for morphs, 'spec' for Spec windows, 'roassal' for visualizations
+        capture_screenshot: Include PNG screenshot in response (default: true)
+
+    Returns:
+        dict: UI structure and metrics
+        - screenshot: Path to PNG file in /tmp/ (if capture_screenshot=true)
+        - target_type: Which UI type was inspected
+        - structure: Complete UI hierarchy data
+        - summary: Human-readable description
+    """
+    return interop_read_screen(target_type, capture_screenshot)
 
 
 def main():

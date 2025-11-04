@@ -11,6 +11,7 @@ It supports:
 - Package Management: Export and import packages in Tonel format
 - Project Installation: Install projects using Metacello
 - Test Execution: Run test suites at package or class level
+- UI Debugging: Capture screenshots and inspect UI structure for World morphs, Spec presenters, and Roassal visualizations
 
 ## Prerequisites
 
@@ -142,7 +143,7 @@ claude mcp add -s user smalltalk-interop -- uv --directory /path/to/pharo-smallt
 
 ### MCP Tools Available
 
-This server provides 19 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
+This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
 
 #### Code Evaluation
 
@@ -180,6 +181,135 @@ This server provides 19 MCP tools that map to all [PharoSmalltalkInteropServer](
 
 - **`run_package_test`**: Run test suites for a package
 - **`run_class_test`**: Run test suites for a specific class
+
+#### UI Debugging
+
+- **`read_screen`**: UI screen reader for debugging Pharo interfaces with screenshot and structure extraction
+
+### read_screen Tool
+
+The `read_screen` tool captures screenshots and extracts UI structure for debugging Pharo UI issues.
+
+**Parameters:**
+
+- `target_type` (string, default: 'world'): UI type to inspect ('world' for morphs, 'spec' for windows, 'roassal' for visualizations)
+- `capture_screenshot` (boolean, default: true): Include PNG screenshot in response
+
+**Returns:** UI structure with screenshot and human-readable summary
+
+**Usage Examples:**
+
+```python
+# Inspect all morphs in World
+read_screen(target_type='world')
+
+# Inspect Spec presenter windows
+read_screen(target_type='spec', capture_screenshot=false)
+
+# Inspect Roassal visualizations without screenshot (faster)
+read_screen(target_type='roassal', capture_screenshot=false)
+```
+
+**Extracted Data Includes:**
+
+*World (morphs):*
+
+- Class name and type identification
+- Bounds (x, y, width, height coordinates)
+- Visibility state
+- Background color
+- Owner class
+- Submorph count
+- Text content (if available)
+
+Example output:
+
+```json
+{
+  "totalMorphs": 12,
+  "displayedMorphCount": 1,
+  "morphs": [
+    {
+      "class": "MenubarMorph",
+      "visible": true,
+      "bounds": {"x": 0, "y": 0, "width": 976, "height": 18},
+      "backgroundColor": "(Color r: 0.883... alpha: 0.8)",
+      "owner": "WorldMorph",
+      "submorphCount": 8
+    }
+  ]
+}
+```
+
+*Spec (presenters):*
+
+- Window title and class name
+- Geometry (extent, position)
+- Window state (maximized, minimized, resizable)
+- Decorations (menu, toolbar, statusbar presence)
+- Presenter hierarchy (recursive with max depth of 3 levels)
+- Presenter class name, child count, and content properties (label, text, value, etc.)
+- Enablement and visibility state
+
+Example output:
+
+```json
+{
+  "windowCount": 1,
+  "presenters": [
+    {
+      "class": "SpWindowPresenter",
+      "title": "Welcome",
+      "extent": "(700@550)",
+      "hasMenu": false,
+      "presenter": {
+        "class": "StWelcomeBrowser",
+        "childCount": 2,
+        "isVisible": true,
+        "children": []
+      }
+    }
+  ]
+}
+```
+
+*Roassal (visualizations):*
+
+- Canvas bounds and visibility state
+- Canvas class identification
+- Background color and zoom level
+- Shape details (color, position, extent, label, text)
+- Edge details (source, target, color, label)
+- Node and edge counts
+
+Example output:
+
+```json
+{
+  "canvasCount": 1,
+  "canvases": [
+    {
+      "class": "RSAthensMorph",
+      "canvasClass": "RSCanvas",
+      "bounds": {"x": 203, "y": 145, "width": 490, "height": 467},
+      "backgroundColor": "Color blue",
+      "zoomLevel": "1.0",
+      "shapeCount": 5,
+      "shapes": [
+        {
+          "class": "RSCircle",
+          "color": "(Color r: 1.0 g: 0.0 b: 0.0 alpha: 0.2)",
+          "position": "(0.0@0.0)",
+          "extent": "(5.0@5.0)"
+        }
+      ],
+      "edgeCount": 0,
+      "edges": [],
+      "nodeCount": 0
+    }
+  ]
+}
+```
 
 ## Development
 
@@ -233,14 +363,14 @@ pharo-smalltalk-interop-mcp-server/
 The test suite uses mock-based testing to ensure:
 
 - **No external dependencies**: Tests run without requiring a live Pharo instance
-- **Comprehensive coverage**: All 19 endpoints and error scenarios are tested
+- **Comprehensive coverage**: All 20 endpoints and error scenarios are tested
 - **Fast execution**: Tests complete in under 1 second
 - **Reliable results**: Tests are deterministic and don't depend on external state
 
 Test coverage includes:
 
 - HTTP client functionality (`PharoClient` class)
-- All 19 Pharo interop operations
+- All 20 Pharo interop operations
 - Error handling (connection errors, HTTP errors, JSON parsing errors)
 - MCP server initialization and tool registration
 - Integration between core functions and MCP tools
