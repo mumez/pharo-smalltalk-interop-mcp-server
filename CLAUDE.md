@@ -251,9 +251,9 @@ result = interop_apply_settings(settings)
 
 ### Common Settings
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `stackSize` | integer | 100 | Maximum stack trace depth for error reporting |
+| Setting     | Type    | Default | Description                                   |
+| ----------- | ------- | ------- | --------------------------------------------- |
+| `stackSize` | integer | 100     | Maximum stack trace depth for error reporting |
 
 **Note:** The server accepts arbitrary key-value pairs beyond documented settings, allowing custom configuration options.
 
