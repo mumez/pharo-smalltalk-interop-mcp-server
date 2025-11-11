@@ -6,11 +6,13 @@ from fastmcp import Context, FastMCP
 from pydantic import Field
 
 from .core import (
+    interop_apply_settings,
     interop_eval,
     interop_export_package,
     interop_get_class_comment,
     interop_get_class_source,
     interop_get_method_source,
+    interop_get_settings,
     interop_import_package,
     interop_install_project,
     interop_list_classes,
@@ -466,6 +468,40 @@ def read_screen(
         - summary: Human-readable description
     """
     return interop_read_screen(target_type, capture_screenshot)
+
+
+@mcp.tool("get_settings")
+def get_settings(_: Context) -> dict[str, Any]:
+    """
+    Retrieve current server configuration.
+
+    Returns:
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": dict} - result contains current server settings
+        - Error: {"success": False, "error": str} - error contains error message
+    """
+    return interop_get_settings()
+
+
+@mcp.tool("apply_settings")
+def apply_settings(
+    _: Context,
+    settings: Annotated[
+        dict[str, Any], Field(description="Settings dictionary to apply to the server")
+    ],
+) -> dict[str, Any]:
+    """
+    Modify server configuration dynamically.
+
+    Args:
+        settings: Dictionary containing server settings to modify
+
+    Returns:
+        dict: API response with success/error and result
+        - Success: {"success": True, "result": str} - result contains confirmation message
+        - Error: {"success": False, "error": str} - error contains error message
+    """
+    return interop_apply_settings(settings)
 
 
 def main():

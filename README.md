@@ -12,6 +12,7 @@ It supports:
 - Project Installation: Install projects using Metacello
 - Test Execution: Run test suites at package or class level
 - UI Debugging: Capture screenshots and inspect UI structure for World morphs, Spec presenters, and Roassal visualizations
+- Server Configuration: Retrieve and modify server settings dynamically
 
 ## Prerequisites
 
@@ -143,7 +144,7 @@ claude mcp add -s user smalltalk-interop -- uv --directory /path/to/pharo-smallt
 
 ### MCP Tools Available
 
-This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
+This server provides 22 MCP tools that map to all [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer/blob/main/spec/openapi.json) APIs:
 
 #### Code Evaluation
 
@@ -185,6 +186,11 @@ This server provides 20 MCP tools that map to all [PharoSmalltalkInteropServer](
 #### UI Debugging
 
 - **`read_screen`**: UI screen reader for debugging Pharo interfaces with screenshot and structure extraction
+
+#### Server Configuration
+
+- **`get_settings`**: Retrieve current server configuration
+- **`apply_settings`**: Modify server configuration dynamically
 
 ### read_screen Tool
 
@@ -311,6 +317,64 @@ Example output:
 }
 ```
 
+### Server Configuration Tools
+
+The `get_settings` and `apply_settings` tools provide dynamic server configuration management.
+
+#### get_settings
+
+Retrieve the current server configuration.
+
+**Parameters:** None
+
+**Returns:** Dictionary containing current server settings
+
+**Usage Example:**
+
+```python
+# Get current settings
+get_settings()
+# Returns: {"stackSize": 100, "customKey": "customValue"}
+```
+
+**Response Format:**
+
+```json
+{
+  "success": true,
+  "result": {
+    "stackSize": 100,
+    "customKey": "customValue"
+  }
+}
+```
+
+#### apply_settings
+
+Modify server configuration dynamically. Settings take effect immediately during the current session.
+
+**Parameters:**
+
+- `settings` (dict): Dictionary containing settings to modify
+
+**Returns:** Success confirmation message
+
+**Usage Example:**
+
+```python
+# Apply new settings
+apply_settings(settings={"stackSize": 200, "customKey": "customValue"})
+# Returns: "Settings applied successfully"
+```
+
+**Common Settings:**
+
+| Setting     | Type    | Default | Description                                   |
+| ----------- | ------- | ------- | --------------------------------------------- |
+| `stackSize` | integer | 100     | Maximum stack trace depth for error reporting |
+
+**Note:** The server accepts arbitrary key-value pairs beyond documented settings, allowing custom configuration options.
+
 ## Development
 
 ### Running Tests
@@ -363,14 +427,14 @@ pharo-smalltalk-interop-mcp-server/
 The test suite uses mock-based testing to ensure:
 
 - **No external dependencies**: Tests run without requiring a live Pharo instance
-- **Comprehensive coverage**: All 20 endpoints and error scenarios are tested
+- **Comprehensive coverage**: All 22 endpoints and error scenarios are tested
 - **Fast execution**: Tests complete in under 1 second
 - **Reliable results**: Tests are deterministic and don't depend on external state
 
 Test coverage includes:
 
 - HTTP client functionality (`PharoClient` class)
-- All 20 Pharo interop operations
+- All 22 Pharo interop operations
 - Error handling (connection errors, HTTP errors, JSON parsing errors)
 - MCP server initialization and tool registration
 - Integration between core functions and MCP tools

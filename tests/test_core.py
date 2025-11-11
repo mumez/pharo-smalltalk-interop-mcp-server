@@ -8,11 +8,13 @@ import httpx
 from pharo_smalltalk_interop_mcp_server.core import (
     PharoClient,
     get_pharo_client,
+    interop_apply_settings,
     interop_eval,
     interop_export_package,
     interop_get_class_comment,
     interop_get_class_source,
     interop_get_method_source,
+    interop_get_settings,
     interop_import_package,
     interop_install_project,
     interop_list_classes,
@@ -810,6 +812,51 @@ class TestPharoClient:
             params={"target_type": "world", "capture_screenshot": False},
         )
 
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_get_settings(self, mock_client_class):
+        """Test get_settings method."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": {"stackSize": 100, "customKey": "customValue"},
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.get_settings()
+
+        assert result == {
+            "success": True,
+            "result": {"stackSize": 100, "customKey": "customValue"},
+        }
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/get-settings", params=None
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_apply_settings(self, mock_client_class):
+        """Test apply_settings method."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": "Settings applied successfully",
+        }
+        mock_client.post.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        settings = {"stackSize": 200, "customKey": "customValue"}
+        result = client.apply_settings(settings)
+
+        assert result == {"success": True, "result": "Settings applied successfully"}
+        mock_client.post.assert_called_once_with(
+            "http://localhost:8086/apply-settings",
+            json={"settings": {"stackSize": 200, "customKey": "customValue"}},
+        )
+
 
 class TestGlobalClientFunctions:
     """Test global client functions."""
@@ -1167,6 +1214,40 @@ class TestInteropFunctions:
         assert result["success"] is True
         # interop_read_screen calls with positional args
         mock_client.read_screen.assert_called_once_with("spec", False)
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_get_settings(self, mock_get_client):
+        """Test interop_get_settings function."""
+        mock_client = Mock()
+        mock_client.get_settings.return_value = {
+            "success": True,
+            "result": {"stackSize": 100, "customKey": "customValue"},
+        }
+        mock_get_client.return_value = mock_client
+
+        result = interop_get_settings()
+
+        assert result == {
+            "success": True,
+            "result": {"stackSize": 100, "customKey": "customValue"},
+        }
+        mock_client.get_settings.assert_called_once()
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
+    def test_interop_apply_settings(self, mock_get_client):
+        """Test interop_apply_settings function."""
+        mock_client = Mock()
+        mock_client.apply_settings.return_value = {
+            "success": True,
+            "result": "Settings applied successfully",
+        }
+        mock_get_client.return_value = mock_client
+
+        settings = {"stackSize": 200, "customKey": "customValue"}
+        result = interop_apply_settings(settings)
+
+        assert result == {"success": True, "result": "Settings applied successfully"}
+        mock_client.apply_settings.assert_called_once_with(settings)
 
 
 class TestEnhancedErrorHandling:

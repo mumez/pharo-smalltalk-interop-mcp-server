@@ -69,13 +69,13 @@ The codebase follows a layered architecture with clean separation of concerns:
    - Connects to `localhost:8086` by default
    - Comprehensive error handling for connection, HTTP, and JSON parsing errors
    - Enhanced error handling supporting detailed error information from PharoSmalltalkInteropServer
-   - 18 core operations mapped to Pharo API endpoints
+   - 22 core operations mapped to Pharo API endpoints
 
 1. **`server.py`** - MCP server layer
 
    - Built on FastMCP framework
    - Decorates core functions with MCP tool registration
-   - Exposes 20 MCP tools covering code evaluation, introspection, search, packages, project installation, testing, and UI debugging
+   - Exposes 22 MCP tools covering code evaluation, introspection, search, packages, project installation, testing, UI debugging, and server configuration
 
 ### Tool Categories
 
@@ -86,6 +86,7 @@ The codebase follows a layered architecture with clean separation of concerns:
 - **Project Installation**: `install_project` - Install projects using Metacello
 - **Test Execution**: `run_package_test`, `run_class_test`
 - **UI Debugging**: `read_screen` - Capture screenshots and extract UI structure
+- **Server Configuration**: `get_settings`, `apply_settings` - Retrieve and modify server configuration
 
 ### Key Patterns
 
@@ -191,6 +192,71 @@ result = read_screen(target_type="roassal", capture_screenshot=True)
 
 Screenshots are saved to `/tmp/` with timestamped filenames: `pharo_screenshot_YYYYMMDD_HHMMSS.png`
 
+## Server Configuration
+
+The `get_settings` and `apply_settings` tools provide dynamic server configuration management.
+
+### get_settings
+
+Retrieve the current server configuration:
+
+```python
+# Get current settings
+result = interop_get_settings()
+# Returns: {"success": True, "result": {"stackSize": 100, "customKey": "customValue"}}
+```
+
+**Response Format:**
+
+```json
+{
+  "success": true,
+  "result": {
+    "stackSize": 100,
+    "customKey": "customValue"
+  }
+}
+```
+
+### apply_settings
+
+Modify server configuration dynamically. Settings are passed as a dictionary and wrapped in a `settings` object:
+
+```python
+# Apply new settings
+settings = {"stackSize": 200, "customKey": "customValue"}
+result = interop_apply_settings(settings)
+# Returns: {"success": True, "result": "Settings applied successfully"}
+```
+
+**Request Format (sent to Pharo server):**
+
+```json
+{
+  "settings": {
+    "stackSize": 200,
+    "customKey": "customValue"
+  }
+}
+```
+
+**Response Format:**
+
+```json
+{
+  "success": true,
+  "result": "Settings applied successfully"
+}
+```
+
+### Common Settings
+
+| Setting     | Type    | Default | Description                                   |
+| ----------- | ------- | ------- | --------------------------------------------- |
+| `stackSize` | integer | 100     | Maximum stack trace depth for error reporting |
+
+**Note:** The server accepts arbitrary key-value pairs beyond documented settings, allowing custom configuration options.
+
 ## MCP Integration
 
 The server is designed to be configured in Cursor's mcp.json:
@@ -223,4 +289,4 @@ Note: The `env` section is optional and can be used to set environment variables
 - All operations return structured JSON with success/error status
 - Enhanced error handling passes through detailed error information from Pharo server
 - Comprehensive test suite with mock-based testing to avoid requiring a live Pharo instance
-- Tests cover all 20 endpoints and error scenarios
+- Tests cover all 22 endpoints and error scenarios
