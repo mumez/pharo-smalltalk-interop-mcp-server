@@ -158,6 +158,15 @@ class PharoClient:
         }
         return self._make_request("GET", "/read-screen", data)
 
+    def get_settings(self) -> dict[str, Any]:
+        """Retrieve current server configuration."""
+        return self._make_request("GET", "/get-settings")
+
+    def apply_settings(self, settings: dict[str, Any]) -> dict[str, Any]:
+        """Modify server configuration dynamically."""
+        data = {"settings": settings}
+        return self._make_request("POST", "/apply-settings", data)
+
     def close(self):
         """Close the HTTP client."""
         self.client.close()
@@ -306,3 +315,15 @@ def interop_read_screen(
     """Read and inspect Pharo UI structure with screenshot."""
     client = get_pharo_client()
     return client.read_screen(target_type, capture_screenshot)
+
+
+def interop_get_settings() -> dict[str, Any]:
+    """Retrieve current server configuration."""
+    client = get_pharo_client()
+    return client.get_settings()
+
+
+def interop_apply_settings(settings: dict[str, Any]) -> dict[str, Any]:
+    """Modify server configuration dynamically."""
+    client = get_pharo_client()
+    return client.apply_settings(settings)
