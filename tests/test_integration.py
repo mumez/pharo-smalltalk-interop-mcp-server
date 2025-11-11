@@ -591,3 +591,66 @@ class TestPharoIntegration:
         assert len(summary) > 0
         # Should mention morphs count
         assert "morph" in summary.lower()
+
+    def test_get_settings(self):
+        """Test get_settings retrieves current server configuration."""
+        response = self.client.get_settings()
+        assert response["success"] is True
+        assert "result" in response
+
+        settings = response["result"]
+        # Settings should be a dictionary
+        assert isinstance(settings, dict)
+        # Should contain stackSize setting (default in PharoSmalltalkInteropServer)
+        assert "stackSize" in settings
+        assert isinstance(settings["stackSize"], int)
+
+    def test_apply_settings(self):
+        """Test apply_settings modifies server configuration."""
+        # Get current settings first
+        response = self.client.get_settings()
+        assert response["success"] is True
+        original_settings = response["result"]
+        original_stack_size = original_settings.get("stackSize", 100)
+
+        # Apply new settings with different stackSize
+        new_stack_size = 150 if original_stack_size != 150 else 200
+        new_settings = {"stackSize": new_stack_size, "testKey": "testValue"}
+        response = self.client.apply_settings(new_settings)
+        assert response["success"] is True
+        assert "result" in response
+
+        # Verify settings were applied by retrieving them again
+        response = self.client.get_settings()
+        assert response["success"] is True
+        updated_settings = response["result"]
+
+        # Check that stackSize was updated
+        assert updated_settings["stackSize"] == new_stack_size
+        # Check that custom key was added
+        assert updated_settings.get("testKey") == "testValue"
+
+        # Restore original settings
+        restore_settings = {"stackSize": original_stack_size}
+        response = self.client.apply_settings(restore_settings)
+        assert response["success"] is True
+
+    def test_apply_settings_with_custom_keys(self):
+        """Test apply_settings accepts arbitrary custom configuration keys."""
+        # Apply custom settings
+        custom_settings = {
+            "customKey1": "value1",
+            "customKey2": 42,
+            "customKey3": True,
+        }
+        response = self.client.apply_settings(custom_settings)
+        assert response["success"] is True
+
+        # Verify custom settings were stored
+        response = self.client.get_settings()
+        assert response["success"] is True
+        settings = response["result"]
+
+        assert settings.get("customKey1") == "value1"
+        assert settings.get("customKey2") == 42
+        assert settings.get("customKey3") is True
