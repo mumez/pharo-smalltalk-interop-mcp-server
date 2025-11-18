@@ -134,6 +134,18 @@ class TestPharoIntegration:
         assert "testMethodBbb" in source
         assert "TestSymbolBBB" in source
 
+    def test_get_method_source_class_method(self):
+        """Test getting SisFixtureClassForTest class>>testClassMethodCcc method source using is_class_method parameter."""
+        response = self.client.get_method_source(
+            "SisFixtureClassForTest", "testClassMethodCcc", is_class_method=True
+        )
+        assert response["success"] is True
+        assert "result" in response
+        source = response["result"]
+        # Check that method source contains expected elements
+        assert "testClassMethodCcc" in source
+        assert "TestClassMethodCCC" in source
+
     def test_list_classes(self):
         """Test listing classes in Sis-Tests package."""
         response = self.client.list_classes("Sis-Tests")
