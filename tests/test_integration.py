@@ -338,9 +338,9 @@ class TestPharoIntegration:
             assert result.startswith("Sis-Tests-Dummy exported to: ")
             # Check the *.st file really exists (search recursively)
             st_files = glob.glob(f"{tmpdir}/**/*.st", recursive=True)
-            assert (
-                len(st_files) > 0
-            ), f"No .st file found in {tmpdir} or its subdirectories after export"
+            assert len(st_files) > 0, (
+                f"No .st file found in {tmpdir} or its subdirectories after export"
+            )
         # Temporary directory is deleted automatically after the with block
 
     def test_list_extended_classes(self):
@@ -565,9 +565,9 @@ class TestPharoIntegration:
         # Screenshot should be a string path
         assert isinstance(screenshot_path, str)
         # File should exist
-        assert os.path.exists(
-            screenshot_path
-        ), f"Screenshot not found at {screenshot_path}"
+        assert os.path.exists(screenshot_path), (
+            f"Screenshot not found at {screenshot_path}"
+        )
         # File should have content
         assert os.path.getsize(screenshot_path) > 0
 
