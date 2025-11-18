@@ -82,6 +82,12 @@ def get_method_source(
     method_name: Annotated[
         str, Field(description="The name of the method to retrieve source for")
     ],
+    is_class_method: Annotated[
+        bool,
+        Field(
+            description="Set to True for class-side methods, False for instance methods (default: False)"
+        ),
+    ] = False,
 ) -> dict[str, Any]:
     """
     Get the source code of a specific method in a class.
@@ -89,13 +95,14 @@ def get_method_source(
     Args:
         class_name: The name of the class containing the method
         method_name: The name of the method to retrieve source for
+        is_class_method: True for class-side methods, False for instance methods (default: False)
 
     Returns:
         dict: API response with success/error and result
         - Success: {"success": True, "result": str} - result contains the method source code
         - Error: {"success": False, "error": str} - error contains error message
     """
-    return interop_get_method_source(class_name, method_name)
+    return interop_get_method_source(class_name, method_name, is_class_method)
 
 
 @mcp.tool("get_class_comment")

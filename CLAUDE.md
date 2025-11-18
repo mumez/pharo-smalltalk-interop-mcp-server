@@ -142,6 +142,44 @@ MCP tools return error responses directly from the Pharo server. Enhanced errors
 
 The Pharo server uses Python-compatible naming conventions (`stack_trace`, `variables`). No code changes are required when upgrading the Pharo server.
 
+## Code Introspection
+
+### get_method_source
+
+Retrieve source code of a specific method from a class, supporting both instance and class-side methods.
+
+**Parameters:**
+
+- **`class_name`**: Name of the class containing the method
+- **`method_name`**: Name of the method to retrieve
+- **`is_class_method`**: Set to `True` for class-side methods, `False` for instance methods (default: `False`)
+
+**Usage Example:**
+
+```python
+# Get instance method source
+result = interop_get_method_source("Object", "hash")
+# Returns: {"success": True, "result": "hash\n\t^ self identityHash"}
+
+# Get class-side method using is_class_method parameter (modern approach)
+result = interop_get_method_source("Array", "with:", is_class_method=True)
+# Returns: {"success": True, "result": "with: anObject\n\t^ self new..."}
+
+# Legacy approach (still supported): append " class" to class name
+result = interop_get_method_source("Array class", "with:")
+```
+
+**Response Format:**
+
+```json
+{
+  "success": true,
+  "result": "methodName\n\t^ methodBody"
+}
+```
+
+**Note:** The `is_class_method` parameter provides a cleaner alternative to appending " class" to the class name. Both approaches are supported for backward compatibility.
+
 ## UI Debugging
 
 The `read_screen` tool provides comprehensive UI inspection capabilities for debugging Pharo interfaces. It captures screenshots and extracts complete UI structure information.

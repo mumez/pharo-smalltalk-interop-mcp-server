@@ -55,9 +55,24 @@ class PharoClient:
         data = {"class_name": class_name}
         return self._make_request("GET", "/get-class-source", data)
 
-    def get_method_source(self, class_name: str, method_name: str) -> dict[str, Any]:
-        """Get source code of a method."""
-        data = {"class_name": class_name, "method_name": method_name}
+    def get_method_source(
+        self, class_name: str, method_name: str, is_class_method: bool = False
+    ) -> dict[str, Any]:
+        """Get source code of a method.
+
+        Args:
+            class_name: Name of the class containing the method
+            method_name: Name of the method to retrieve
+            is_class_method: True for class-side methods, False for instance methods (default: False)
+
+        Returns:
+            dict: API response with success/error and result
+        """
+        data = {
+            "class_name": class_name,
+            "method_name": method_name,
+            "is_class_method": str(is_class_method).lower(),
+        }
         return self._make_request("GET", "/get-method-source", data)
 
     def search_classes_like(self, class_name_query: str) -> dict[str, Any]:

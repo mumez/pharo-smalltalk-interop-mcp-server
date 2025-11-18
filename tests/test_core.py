@@ -184,7 +184,7 @@ class TestPharoClient:
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
     def test_get_method_source(self, mock_client_class):
-        """Test get_method_source method."""
+        """Test get_method_source method for instance method."""
         mock_client = Mock()
         mock_response = Mock()
         mock_response.json.return_value = {"success": True, "result": "method source"}
@@ -197,7 +197,36 @@ class TestPharoClient:
         assert result == {"success": True, "result": "method source"}
         mock_client.get.assert_called_once_with(
             "http://localhost:8086/get-method-source",
-            params={"class_name": "Object", "method_name": "hash"},
+            params={
+                "class_name": "Object",
+                "method_name": "hash",
+                "is_class_method": "false",
+            },
+        )
+
+    @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
+    def test_get_method_source_class_method(self, mock_client_class):
+        """Test get_method_source method for class-side method."""
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "success": True,
+            "result": "class method source",
+        }
+        mock_client.get.return_value = mock_response
+        mock_client_class.return_value = mock_client
+
+        client = PharoClient()
+        result = client.get_method_source("Array", "new:", is_class_method=True)
+
+        assert result == {"success": True, "result": "class method source"}
+        mock_client.get.assert_called_once_with(
+            "http://localhost:8086/get-method-source",
+            params={
+                "class_name": "Array",
+                "method_name": "new:",
+                "is_class_method": "true",
+            },
         )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.httpx.Client")
