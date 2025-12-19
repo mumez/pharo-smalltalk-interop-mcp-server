@@ -224,7 +224,9 @@ def interop_get_method_source(
 ) -> dict[str, Any]:
     """Get source code of a method."""
     client = get_pharo_client()
-    return client.get_method_source(class_name, method_name, is_class_method=is_class_method)
+    return client.get_method_source(
+        class_name, method_name, is_class_method=is_class_method
+    )
 
 
 def interop_search_classes_like(class_name_query: str) -> dict[str, Any]:
