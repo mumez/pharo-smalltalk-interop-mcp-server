@@ -56,7 +56,7 @@ class PharoClient:
         return self._make_request("GET", "/get-class-source", data)
 
     def get_method_source(
-        self, class_name: str, method_name: str, is_class_method: bool = False
+        self, class_name: str, method_name: str, *, is_class_method: bool = False
     ) -> dict[str, Any]:
         """Get source code of a method.
 
@@ -219,10 +219,14 @@ def interop_get_class_source(class_name: str) -> dict[str, Any]:
     return client.get_class_source(class_name)
 
 
-def interop_get_method_source(class_name: str, method_name: str) -> dict[str, Any]:
+def interop_get_method_source(
+    class_name: str, method_name: str, *, is_class_method: bool = False
+) -> dict[str, Any]:
     """Get source code of a method."""
     client = get_pharo_client()
-    return client.get_method_source(class_name, method_name)
+    return client.get_method_source(
+        class_name, method_name, is_class_method=is_class_method
+    )
 
 
 def interop_search_classes_like(class_name_query: str) -> dict[str, Any]:

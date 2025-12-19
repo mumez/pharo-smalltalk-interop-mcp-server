@@ -102,7 +102,9 @@ def get_method_source(
         - Success: {"success": True, "result": str} - result contains the method source code
         - Error: {"success": False, "error": str} - error contains error message
     """
-    return interop_get_method_source(class_name, method_name, is_class_method)
+    return interop_get_method_source(
+        class_name, method_name, is_class_method=is_class_method
+    )
 
 
 @mcp.tool("get_class_comment")
