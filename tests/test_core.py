@@ -953,7 +953,9 @@ class TestInteropFunctions:
         result = interop_get_method_source("Object", "hash")
 
         assert result == {"success": True, "result": "source"}
-        mock_client.get_method_source.assert_called_once_with("Object", "hash")
+        mock_client.get_method_source.assert_called_once_with(
+            "Object", "hash", is_class_method=False
+        )
 
     @patch("pharo_smalltalk_interop_mcp_server.core.get_pharo_client")
     def test_interop_search_classes_like(self, mock_get_client):
