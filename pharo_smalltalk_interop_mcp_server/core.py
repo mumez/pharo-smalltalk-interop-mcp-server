@@ -16,7 +16,9 @@ class PharoInteropError(Exception):
 class PharoClient:
     """HTTP client for communicating with PharoSmalltalkInteropServer."""
 
-    def __init__(self, host: str = "localhost", port: int | None = None):
+    def __init__(self, host: str | None = None, port: int | None = None):
+        if host is None:
+            host = os.getenv("PHARO_SIS_HOST", "localhost")
         if port is None:
             port = int(os.getenv("PHARO_SIS_PORT", "8086"))
         self.base_url = f"http://{host}:{port}"

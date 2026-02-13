@@ -55,13 +55,25 @@ class TestPharoClient:
 
     @patch.dict("os.environ", {"PHARO_SIS_PORT": "8081"})
     def test_init_explicit_port_overrides_env(self):
-        """Test that explicit port parameter overrides environment variable."""
+        """Test that explicit port parameter overrides port environment variable."""
         client = PharoClient(port=9999)
         assert client.base_url == "http://localhost:9999"
 
+    @patch.dict("os.environ", {"PHARO_SIS_HOST": "pharo.example"})
+    def test_init_explicit_host_overrides_env(self):
+        """Test that explicit host parameter overrides host environment variable."""
+        client = PharoClient(host="example.com")
+        assert client.base_url == "http://example.com:8086"
+
+    @patch.dict("os.environ", {"PHARO_SIS_HOST": "pharo.example", "PHARO_SIS_PORT": "8081"})
+    def test_init_with_host_and_port_env(self):
+        """Test PharoClient initialization with host and port explicitly set in environment variables."""
+        client = PharoClient()
+        assert client.base_url == "http://pharo.example:8081"
+
     @patch.dict("os.environ", {}, clear=True)
     def test_init_default_port_when_no_env(self):
-        """Test default port is used when no environment variable is set."""
+        """Test default port and host are used when no environment variable is set."""
         client = PharoClient()
         assert client.base_url == "http://localhost:8086"
 
