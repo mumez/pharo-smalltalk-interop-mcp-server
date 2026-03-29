@@ -20,6 +20,10 @@ It supports:
 - [uv](https://docs.astral.sh/uv/) package manager
 - Pharo with [PharoSmalltalkInteropServer](https://github.com/mumez/PharoSmalltalkInteropServer) installed
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/mumez-pharo-smalltalk-interop-mcp-server).
+
 ## Installation
 
 ### Quick Start (using uvx)
