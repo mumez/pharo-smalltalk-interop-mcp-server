@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/mumez/pharo-smalltalk-interop-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/mumez/pharo-smalltalk-interop-mcp-server/actions/workflows/ci.yml)
 
+> **⚠️ This project has moved.** Starting with v4.0.0, development has moved to [smalltalk-interop-mcp-server](https://github.com/mumez/smalltalk-interop-mcp-server), which adds support for Squeak's SIS server in addition to Pharo. Please use the new repository for the latest features and updates; this repository is kept for historical reference only.
+
 A local MCP server to communicate local Pharo Smalltalk image.
 It supports:
 
